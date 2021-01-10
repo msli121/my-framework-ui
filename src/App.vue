@@ -17,7 +17,7 @@ export default {
 <style>
 
 body {
-  margin:8px 8px 0px 0px;
+  margin:8px 0px 0px 0px;
 }
 
 #app {

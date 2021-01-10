@@ -6,6 +6,8 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="首页" name="home">
           <home-scroll></home-scroll>
+          <home-body></home-body>
+          <!-- <home-footer></home-footer> -->
         </el-tab-pane>
         <el-tab-pane label="OCR" name="ocr">OCR</el-tab-pane>
         <el-tab-pane label="PDF转换" name="pad">PDF转换</el-tab-pane>
@@ -17,12 +19,12 @@
 </template>
 
 <script>
-import homeScroll from '../components/homeScroll.vue';
-// import homeHeader from '../components/homeHeader.vue';
+import homeScroll from '../components/home/homeScroll.vue';
+import homeBody from "../components/home/homeBody.vue";
 
 export default {
   name: 'home',
-  components: { homeScroll },
+  components: { homeScroll, homeBody },
   data() {
     return {
       activeName: "home"
