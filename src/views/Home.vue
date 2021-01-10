@@ -1,40 +1,86 @@
 <template>
-  <el-container>
-    <el-header>Header</el-header>
-    <el-main>
-      <home-scroll></home-scroll> 
-    </el-main>
-    <el-footer>Footer</el-footer>
-  </el-container>
+  <div>
+    <div class="header-container">
+      <div class="header-logo-box"></div>
+      <div class="header-main-box ">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="首页" name="home">
+          <home-scroll></home-scroll>
+        </el-tab-pane>
+        <el-tab-pane label="OCR" name="ocr">OCR</el-tab-pane>
+        <el-tab-pane label="PDF转换" name="pad">PDF转换</el-tab-pane>
+      </el-tabs>
+      </div>
+      <div class="login-box"></div>
+    </div>
+  </div>
 </template>
 
 <script>
-import homeScroll from '../components/homeScroll.vue'
+import homeScroll from '../components/homeScroll.vue';
+// import homeHeader from '../components/homeHeader.vue';
 
 export default {
   name: 'home',
-  components: { homeScroll }
+  components: { homeScroll },
+  data() {
+    return {
+      activeName: "home"
+    }
+  },
+  methods: {
+    handleClick() {
+
+    }
+  }
 }
 </script>
 
-<style scoped>
-  .el-header {
+<style lang="less" scoped>
+  .header-container {
     height: 60px;
+    width: 100%;
     background: #fff;
-    /* position: fixed;
-    top: 0;
-    left: 0; */
-    /* width: 100%; */
-    z-index: 5;
-    border-bottom: 1px solid #e6e6e6;
   }
 
-  .el-main {
-    padding-top: 0px;
-    background-color: #fff;
+  .header-logo-box {
+    position: absolute;
+    height: 60px;
+    left: 20px;
+    top: 0px;
+    width: 40px;
+    border: 1px solid red;
   }
-  
-  body > .el-container {
-    margin-bottom: 40px;
+
+  .header-main-box {
+    width: 100%;
+    /* margin:0 auto; */
+  }
+
+  .login-box {
+    position: absolute;
+    height: 60px;
+    right: 20px;
+    top: 0px;
+    width: 40px;
+    border: 1px solid red;
+  }
+
+  /deep/ .el-tabs__header {
+    margin: 0 0 1px 0
+  }
+
+  /deep/.el-tabs__nav {
+    left: 45%;
+  }
+
+  /deep/ .el-tabs__active-bar {
+    height: 4px;
+  }
+
+  /deep/ .el-tabs__item {
+    height: 50px;
+    font-size: 16px;
+    line-height: 45px;
   }
 </style>

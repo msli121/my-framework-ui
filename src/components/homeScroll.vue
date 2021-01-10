@@ -1,22 +1,21 @@
 <template>
-	<el-carousel indicator-position="outside">
+	<el-carousel height="400px">
     <el-carousel-item v-for="image in images" :key="image.url">
-      <el-image
+      <el-image style="height: 400px"
       :src="image.url"
       :fit="image.fitType"></el-image>
     </el-carousel-item>
   </el-carousel>
 </template>
-
 <script>
 export default {
   name: "homeScroll",
   data() {
     return {
       images: [
-        {fitType: 'fill', url: '/images/ocr1.jpg'},
-        {fitType: 'contain', url: '/images/ocr2.jpg'},
-        {fitType: 'cover', url: '/images/ocr3.jpg'},
+        {fitType: 'none', url: '/images/ocr1.jpg'},
+        {fitType: 'none', url: '/images/ocr2.jpg'},
+        {fitType: 'none', url: '/images/ocr3.jpg'},
         {fitType: 'none', url: '/images/ocr4.jpg'},
       ]
     }
@@ -25,19 +24,12 @@ export default {
 </script>
 
 <style scoped>
-	.el-carousel__item h3 {
-		color: #475669;
-		font-size: 14px;
-		opacity: 0.75;
-		line-height: 150px;
-		margin: 0;
-	}
 
 	.el-carousel__item:nth-child(2n) {
-		background-color: #99a9bf;
+		background-color: #fff;
 	}
 
 	.el-carousel__item:nth-child(2n + 1) {
-		background-color: #d3dce6;
+		background-color: #fff;
 	}
 </style>

@@ -15,6 +15,11 @@ export default {
 
 
 <style>
+
+body {
+  margin:8px 8px 0px 0px;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

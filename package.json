@@ -11,6 +11,8 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "element-ui": "^2.14.1",
+    "less": "^4.1.0",
+    "less-loader": "^7.2.1",
     "vue": "^2.6.11",
     "vue-axios": "^3.2.2",
     "vue-router": "^3.2.0",
