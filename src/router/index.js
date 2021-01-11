@@ -15,7 +15,9 @@ return originalPush.call(this, location).catch(err => err)
 const routes = [
   {
     path: '/',
-    redirct: '/home'
+    redirct: {
+      name: 'home'
+    }
   },
 
   {

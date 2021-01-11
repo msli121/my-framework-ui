@@ -6,11 +6,13 @@
           <header-logo @logo-click="activeName = 'home'"></header-logo>
         </div>
         <div class="header-nav-box">
-          <router-link to="/home">Home</router-link>
+          <router-link to="/home">首页</router-link>
           <router-link to="/ocr">OCR</router-link>
           <router-link to="/pdf">PDF</router-link>
         </div>
-        <div class="heder-login-box"></div>
+        <div class="header-login-box">
+          <header-user-info></header-user-info>
+        </div>
       </div>
     </div>
     <router-view></router-view>
@@ -18,12 +20,12 @@
 </template>
 
 <script>
-// import homePage from "../components/homePage.vue";
 import headerLogo from "../components/headerLogo.vue";
+import headerUserInfo from "../components/headerUserInfo.vue";
 
 export default {
   name: "home",
-  components: { headerLogo },
+  components: { headerLogo, headerUserInfo },
   data() {
     return {
       activeName: "home",
@@ -40,6 +42,9 @@ export default {
   height: 60px;
   width: 100%;
   background: #fff;
+  position: fixed; 
+  top: 0;
+  z-index: 5;
 }
 
 .header-logo-box {
@@ -48,7 +53,7 @@ export default {
   left: 18%;
   top: 0px;
   width: 200px;
-  z-index: 2;
+  z-index: 10;
 }
 
 .header-nav-box {
@@ -75,7 +80,7 @@ export default {
   width: 100%;
 }
 
-.heder-login-box {
+.header-login-box {
   position: absolute;
   height: 60px;
   right: 18%;

@@ -9,7 +9,13 @@
         ></el-image>
       </el-carousel-item>
     </el-carousel>
-    <div class="home-body-container"></div>
+    <div class="home-body-container">
+      <div class="production-list-bg">
+        <div class="production-main">
+          <h2>产品列表</h2>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -40,9 +46,27 @@ export default {
   }
   
   .home-body-container {
-    background-color: #edeeef;
-    height: 500px;
+    background-color: #ffff;
+    height: 600px;
     width: 100%;
   }
   
+  .production-list-bg {
+    background-image: url(/images/production-list-bg.jpg);
+    background-size: 100%;
+    background-color: #edeeef;
+    height: 400px;
+    padding-top: 30px;
+  }
+  .production-list-bg.production-main {
+    width: 1200px;
+    margin: 0 auto;
+  }
+  .production-main>h2 {
+    font-size: 28px;
+    color: #333333;
+    text-align: center;
+    font-weight: bold;
+    line-height: 1.5;
+}
 </style>
