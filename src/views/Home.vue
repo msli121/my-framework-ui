@@ -1,88 +1,106 @@
 <template>
   <div>
     <div class="header-container">
-      <div class="header-logo-box"></div>
-      <div class="header-main-box ">
-        <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="首页" name="home">
-          <home-scroll></home-scroll>
-          <home-body></home-body>
-          <!-- <home-footer></home-footer> -->
-        </el-tab-pane>
-        <el-tab-pane label="OCR" name="ocr">OCR</el-tab-pane>
-        <el-tab-pane label="PDF转换" name="pad">PDF转换</el-tab-pane>
-      </el-tabs>
+      <div>
+        <div class="header-logo-box">
+          <header-logo @logo-click="activeName = 'home'"></header-logo>
+        </div>
+        <div class="header-nav-box">
+          <router-link to="/home">Home</router-link>
+          <router-link to="/ocr">OCR</router-link>
+          <router-link to="/pdf">PDF</router-link>
+        </div>
+        <div class="heder-login-box"></div>
       </div>
-      <div class="login-box"></div>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import homeScroll from '../components/home/homeScroll.vue';
-import homeBody from "../components/home/homeBody.vue";
+// import homePage from "../components/homePage.vue";
+import headerLogo from "../components/headerLogo.vue";
 
 export default {
-  name: 'home',
-  components: { homeScroll, homeBody },
+  name: "home",
+  components: { headerLogo },
   data() {
     return {
-      activeName: "home"
-    }
+      activeName: "home",
+    };
   },
   methods: {
-    handleClick() {
-
-    }
-  }
-}
+  },
+};
 </script>
 
 <style lang="less" scoped>
-  .header-container {
-    height: 60px;
-    width: 100%;
-    background: #fff;
-  }
 
-  .header-logo-box {
-    position: absolute;
-    height: 60px;
-    left: 20px;
-    top: 0px;
-    width: 40px;
-    border: 1px solid red;
-  }
+.header-container {
+  height: 60px;
+  width: 100%;
+  background: #fff;
+}
 
-  .header-main-box {
-    width: 100%;
-    /* margin:0 auto; */
-  }
+.header-logo-box {
+  position: absolute;
+  height: 60px;
+  left: 18%;
+  top: 0px;
+  width: 200px;
+  z-index: 2;
+}
 
-  .login-box {
-    position: absolute;
-    height: 60px;
-    right: 20px;
-    top: 0px;
-    width: 40px;
-    border: 1px solid red;
-  }
+.header-nav-box {
+  height: 60px;
+}
 
-  /deep/ .el-tabs__header {
-    margin: 0 0 1px 0
-  }
+.header-nav-box a {
+  display: inline-block;
+  font-weight: bold;
+  font-size: 16px;
+  margin-right: 40px;
+  color: #2c3e50;
+  height: 56px;
+  line-height: 56px;
+  text-decoration: none;
+}
 
-  /deep/.el-tabs__nav {
-    left: 45%;
-  }
+.header-nav-box a.router-link-exact-active {
+  color: #42b983;
+  border-bottom: 4px solid #42b983;
+}
 
-  /deep/ .el-tabs__active-bar {
-    height: 4px;
-  }
+.header-main-box {
+  width: 100%;
+}
 
-  /deep/ .el-tabs__item {
-    height: 50px;
-    font-size: 16px;
-    line-height: 45px;
-  }
+.heder-login-box {
+  position: absolute;
+  height: 60px;
+  right: 18%;
+  top: 0px;
+  width: 200px;
+  z-index: 2;
+}
+
+/deep/ .el-tabs__header {
+  margin: 0 0 1px 0;
+}
+
+/deep/.el-tabs__nav {
+  left: 45%;
+}
+
+/deep/ .el-tabs__active-bar {
+  height: 4px;
+}
+
+/deep/ .el-tabs__item {
+  height: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #2c3e50;
+  line-height: 45px;
+}
 </style>

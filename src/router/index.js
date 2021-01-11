@@ -1,23 +1,47 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import home from '../views/home.vue'
+import ocr from '../views/ocr.vue'
+import pdf from '../views/pdf.vue'
+import login from '../views/login.vue'
+import homePage from '../components/homePage.vue'
 
 Vue.use(VueRouter)
+
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+return originalPush.call(this, location).catch(err => err)
+}
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: home
+    redirct: '/home'
   },
+
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/about.vue')
+    path: '/home',
+    name: 'home',
+    component: homePage,
+  },
+
+  {
+    path: '/ocr',
+    name: 'ocr',
+    component: ocr
+  },
+
+  {
+    path: '/pdf',
+    name: 'pdf',
+    component: pdf
+  },
+
+  {
+    path: '/login',
+    name: 'login',
+    component: login
   }
+
 ]
 
 const router = new VueRouter({
