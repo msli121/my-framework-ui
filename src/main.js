@@ -10,7 +10,7 @@ import less from 'less'
 
 Vue.config.productionTip = false
 
-axios.defaults.baseURL = "/api"
+axios.defaults.baseURL = "http://localhost:8888/api"
 Vue.use(VueAxios, axios)
 
 Vue.use(ElementUI)

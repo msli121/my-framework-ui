@@ -2,8 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import ocr from '../views/ocr.vue'
 import pdf from '../views/pdf.vue'
-import homePage from '../components/homePage.vue'
 import home from '../views/home.vue'
+import homePage from '../components/homePage.vue'
 
 Vue.use(VueRouter)
 
