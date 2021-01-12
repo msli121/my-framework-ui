@@ -18,7 +18,6 @@
 </template>
 
 <script>
-// import homePage from "../components/homePage.vue";
 import headerLogo from "../components/headerLogo.vue";
 
 export default {
@@ -26,7 +25,6 @@ export default {
   components: { headerLogo },
   data() {
     return {
-      activeName: "home",
     };
   },
   methods: {
