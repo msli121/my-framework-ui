@@ -1,9 +1,9 @@
 <template>
   <div class="user-info-container">
     <div v-if="!isLogin" class="header-login-box">
-      <el-button type="text" style="color: #606266;font-size=16px;font-weight:bold;" >登录</el-button>
+      <el-button type="text" style="color: #606266;font-size=16px;font-weight:bold;" @click="handleLogin" >登录</el-button>
       <el-divider direction="vertical" style="width: 2px;"></el-divider>
-      <el-button type="text" style="font-size=16px;font-weight:bold;" >注册</el-button>
+      <el-button type="text" style="font-size=16px;font-weight:bold;" @click="handleRegistry">注册</el-button>
     </div>
   </div>
 </template>
@@ -14,6 +14,11 @@ export default {
   data() {
     return {
       isLogin: false
+    }
+  },
+  methods: {
+    handleLogin() {
+      this.$router.push({path: '/login'});
     }
   }
 }

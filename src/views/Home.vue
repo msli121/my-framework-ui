@@ -3,7 +3,7 @@
     <div class="header-container">
       <div>
         <div class="header-logo-box">
-          <header-logo @logo-click="activeName = 'home'"></header-logo>
+          <header-logo></header-logo>
         </div>
         <div class="header-nav-box">
           <router-link to="/home/page">首页</router-link>

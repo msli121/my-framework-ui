@@ -1,6 +1,6 @@
 <template>
   <div class="header-logo-container">
-    <img src="../assets/icons/logo.png" @click="$router.replace({path: '/home/page'})" style="cursor: pointer" alt="errorIcon" slot="reference"/>
+    <img src="../assets/icons/logo.png" @click="$router.push({path: '/home/page'})" style="cursor: pointer" alt="errorIcon" slot="reference"/>
   </div>
 </template>
 
@@ -9,14 +9,9 @@ export default {
   name: "headerLogo",
   data() {
     return {
-      
     }
   },
   methods: {
-    handleLogoClick() {
-      console.log("click111")
-      this.$emit("logo-click");
-    }
   }
 }
 </script>

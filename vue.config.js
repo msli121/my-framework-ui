@@ -1,10 +1,10 @@
 module.exports = {
   devServer: {
     proxy: {
-      // api是后端数据接口的地址
+      //  /api 是后端项目上下文路径
       '/api': {
         // 后端主机
-        target: "http://111.229.37.167/",
+        target: "http://localhost:8888",
         // 允许跨域
         changOrigin: true
       }
