@@ -2,28 +2,39 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import ocr from '../views/ocr.vue'
 import pdf from '../views/pdf.vue'
-import login from '../views/login.vue'
 import homePage from '../components/homePage.vue'
+import home from '../views/home.vue'
 
 Vue.use(VueRouter)
 
+// 原生push报错处理
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
 return originalPush.call(this, location).catch(err => err)
 }
 
+// 原生replace报错处理
+const originalReplace = VueRouter.prototype.replace;
+VueRouter.prototype.replace = function replace(location) {
+  return originalReplace.call(this, location).catch(err => err);
+};
+
 const routes = [
   {
     path: '/',
-    redirct: {
-      name: 'home'
-    }
+    redirect: '/home/page'
   },
 
   {
     path: '/home',
     name: 'home',
-    component: homePage,
+    component: home,
+    children: [
+      { path: 'page', component: homePage},
+      { path: 'ocr', component: ocr },
+      { path: 'pdf', component: pdf },
+      // { path: 'custom', component: custom },
+    ]
   },
 
   {
@@ -41,8 +52,14 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: login
-  }
+    component: () => import('@/views/login.vue')
+  },
+
+  {
+    path: '*',
+    name: 'error',
+    component: () => import('@/components/errorPage.vue')
+  },
 
 ]
 

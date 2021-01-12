@@ -1,26 +1,23 @@
 <template>
   <div>
-    this is login page!
+    this is custom page!
   </div>
 </template>
 
 <script>
 export default {
-  name: "login",
+  name: "custom",
   mounted() {
-    console.log("login mounted!");
+    console.log("custom mounted!");
   },
   data() {
     return {
-      
     }
   },
   methods: {
-
   }
 }
 </script>
 
 <style>
-
 </style>

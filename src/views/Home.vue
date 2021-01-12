@@ -6,15 +6,17 @@
           <header-logo @logo-click="activeName = 'home'"></header-logo>
         </div>
         <div class="header-nav-box">
-          <router-link to="/home">首页</router-link>
-          <router-link to="/ocr">OCR</router-link>
-          <router-link to="/pdf">PDF</router-link>
+          <router-link to="/home/page">首页</router-link>
+          <router-link to="/home/ocr">OCR</router-link>
+          <router-link to="/home/pdf">PDF</router-link>
+          <router-link to="/home/custom">服务定制</router-link>
         </div>
         <div class="header-login-box">
           <header-user-info></header-user-info>
         </div>
       </div>
     </div>
+    <div class="router-show-container"></div>
     <router-view></router-view>
   </div>
 </template>
@@ -57,6 +59,7 @@ export default {
 
 .header-nav-box {
   height: 60px;
+  border-bottom: 1px solid #e6e6e6;
 }
 
 .header-nav-box a {
@@ -86,6 +89,10 @@ export default {
   top: 0px;
   width: 200px;
   z-index: 2;
+}
+
+.router-show-container {
+  margin-top: 60px;
 }
 
 /deep/ .el-tabs__header {

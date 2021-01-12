@@ -1,15 +1,18 @@
 <template>
   <div id="app">
-    <home></home>
+    <!-- 路由的出入口，路由的内容将被显示在这里 -->
+    <router-view></router-view>
+    <!-- <router-link to="/"></router-link> -->
+    <!-- <home></home> -->
   </div>
 </template>
 
 <script>
-import home from "./views/home"
+// import home from "./views/home"
 
 export default {
   name: "App",
-  components: {home}
+  // components: {home}
 }
 </script>
 

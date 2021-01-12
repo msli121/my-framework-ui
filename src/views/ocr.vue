@@ -1,5 +1,6 @@
 <template>
   <div>
+    <a href="http://www.w3school.com.cn">W3School</a>
     this is ocr page!
   </div>
 </template>
