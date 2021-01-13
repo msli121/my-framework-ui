@@ -29,6 +29,9 @@ const routes = [
     path: '/home',
     name: 'home',
     component: home,
+    meta: {
+      requireAuth: false
+    },
     children: [
       { path: 'page', component: homePage},
       { path: 'ocr', component: ocr },
@@ -40,24 +43,36 @@ const routes = [
   {
     path: '/ocr',
     name: 'ocr',
+    meta: {
+      requireAuth: false
+    },
     component: ocr
   },
 
   {
     path: '/pdf',
     name: 'pdf',
+    meta: {
+      requireAuth: false
+    },
     component: pdf
   },
 
   {
     path: '/login',
     name: 'login',
+    meta: {
+      requireAuth: false
+    },
     component: () => import('@/views/login.vue')
   },
 
   {
     path: '*',
     name: 'error',
+    meta: {
+      requireAuth: false
+    },
     component: () => import('@/components/errorPage.vue')
   },
 
@@ -68,5 +83,6 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
 
 export default router

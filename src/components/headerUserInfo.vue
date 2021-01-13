@@ -19,6 +19,9 @@ export default {
   methods: {
     handleLogin() {
       this.$router.push({path: '/login'});
+    },
+    handleRegistry() {
+      this.$router.push({path: '/login'});
     }
   }
 }
