@@ -21,7 +21,7 @@ export default {
       this.$router.push({path: '/login'});
     },
     handleRegistry() {
-      this.$router.push({path: '/login'});
+      this.$router.push({path: '/registry'});
     }
   }
 }

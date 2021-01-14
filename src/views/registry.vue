@@ -1,8 +1,13 @@
 <template>
-  <div class="login-body-container">
-    <el-form class="login-container" :model="loginForm" label-position="left" label-width="0px">
-      <h3 class="login_title">系统登录</h3>
-      <el-form-item label="">
+  <body id="paper">
+    <el-form
+      class="login-container"
+      label-position="left"
+      label-width="0px"
+      v-loading="loading"
+    >
+      <h3 class="login_title">用户注册</h3>
+      <el-form-item>
         <el-input
           type="text"
           v-model="loginForm.username"
@@ -10,7 +15,7 @@
           placeholder="账号"
         ></el-input>
       </el-form-item>
-      <el-form-item label="">
+      <el-form-item>
         <el-input
           type="password"
           v-model="loginForm.password"
@@ -18,65 +23,61 @@
           placeholder="密码"
         ></el-input>
       </el-form-item>
-      <el-form-item label="" style="width: 100%;">
+      <el-form-item style="width: 100%">
         <el-button
           type="primary"
-          style="width: 100%;"
-          v-on:click="login"
-          >登录</el-button
+          style="width: 40%; background: #505458; border: none"
+          v-on:click="register"
+          >注册</el-button
         >
       </el-form-item>
     </el-form>
-  </div>
+  </body>
 </template>
-
 <script>
 export default {
-  name: "Login",
+  name: "registry",
   data() {
     return {
+      checked: true,
       loginForm: {
-        username: "admin",
-        password: "123",
+        username: "",
+        password: "",
       },
-      responseResult: [],
+      loading: false,
     };
   },
   methods: {
-    login() {
-      let that = this
-      console.log(this.$store.state)
+    register() {
+      var that = this;
       this.axios
-        .post("/login", {
+        .post("/registry", {
           username: this.loginForm.username,
           password: this.loginForm.password,
         })
-        .then((successResponse) => {
-          console.log("successResponse", successResponse);
-          if (successResponse.data.code == 200) {
-            that.$store.commit('login', that.loginForm);
-            let path = this.$route.query.redirect;
+        .then((resp) => {
+          console.log("successResponse", resp);
+          if (resp.data.code === "200") {
             that.$message({
               type: 'success',
-              message: successResponse.data.msg
+              message: resp.data.msg
             });
-            that.$router.replace({path: path === '/' || path === undefined ? '/home/page' : path});
+            // that.$router.replace("/login");
           } else {
-            that.$message.error(successResponse.data.msg);
+            that.$message.error(resp.data.msg);
           }
         })
         .catch((failResponse) => {
           console.log(failResponse);
-          that.$message.error("服务器异常");
+          this.$message.error("服务器异常");
         });
     },
   },
 };
 </script>
-
 <style>
-.login-body-container {
-  /* background: url("/images/login-bg.jpg") no-repeat; */
+#paper {
+  
   background-position: center;
   height: 100%;
   width: 100%;
@@ -84,7 +85,7 @@ export default {
   position: fixed;
 }
 body {
-  margin: 0px;
+  margin: -5px 0px;
 }
 .login-container {
   border-radius: 15px;

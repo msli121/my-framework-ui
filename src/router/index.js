@@ -60,6 +60,13 @@ const routes = [
   },
 
   {
+    path: '/registry',
+    name: 'registry',
+    component: () => import('@/views/registry.vue')
+  },
+
+
+  {
     path: '*',
     name: 'error',
     component: () => import('@/components/errorPage.vue')
