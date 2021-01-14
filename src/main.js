@@ -16,6 +16,22 @@ Vue.use(VueAxios, axios)
 Vue.use(ElementUI)
 Vue.use(less)
 
+router.beforeEach((to, from, next) => {
+  if (to.meta.requireAuth) {
+    if (store.state.user.username) {
+      next()
+    } else {
+      next({
+        path: 'login',
+        query: {redirect: to.fullPath}
+      })
+    }
+  } else {
+    next()
+  }
+}
+)
+
 new Vue({
   router,
   store,

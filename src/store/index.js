@@ -1,17 +1,30 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import user from './modules/user'
+// import user from './modules/user'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    user: {
+      username: window.localStorage.getItem('user' || '[]') == null ? '' : JSON.parse(window.localStorage.getItem('user' || '[]')).username
+    }
   },
   mutations: {
-  },
-  actions: {
-  },
-  modules: {
-    user
+    login (state, user) {
+      state.user = user
+      window.localStorage.setItem('user', JSON.stringify(user))
+    }
   }
 })
+// export default new Vuex.Store({
+//   state: {
+//   },
+//   mutations: {
+//   },
+//   actions: {
+//   },
+//   modules: {
+//     user
+//   }
+// })

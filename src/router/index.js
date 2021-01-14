@@ -43,36 +43,25 @@ const routes = [
   {
     path: '/ocr',
     name: 'ocr',
-    meta: {
-      requireAuth: false
-    },
+    
     component: ocr
   },
 
   {
     path: '/pdf',
     name: 'pdf',
-    meta: {
-      requireAuth: false
-    },
     component: pdf
   },
 
   {
     path: '/login',
     name: 'login',
-    meta: {
-      requireAuth: false
-    },
     component: () => import('@/views/login.vue')
   },
 
   {
     path: '*',
     name: 'error',
-    meta: {
-      requireAuth: false
-    },
     component: () => import('@/components/errorPage.vue')
   },
 
