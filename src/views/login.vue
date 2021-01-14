@@ -58,6 +58,7 @@ export default {
             let path = this.$route.query.redirect;
             that.$message({
               type: 'success',
+              
               message: successResponse.data.msg
             });
             that.$router.replace({path: path === '/' || path === undefined ? '/home/page' : path});
