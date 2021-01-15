@@ -44,8 +44,7 @@ export default {
   },
   methods: {
     login() {
-      let that = this
-      console.log(this.$store.state)
+      let that = this;
       this.axios
         .post("/login", {
           username: this.loginForm.username,
@@ -54,11 +53,10 @@ export default {
         .then((successResponse) => {
           console.log("successResponse", successResponse);
           if (successResponse.data.code == 200) {
-            that.$store.commit('login', that.loginForm);
+            that.$store.commit('login', that.loginForm.username);
             let path = this.$route.query.redirect;
             that.$message({
               type: 'success',
-              
               message: successResponse.data.msg
             });
             that.$router.replace({path: path === '/' || path === undefined ? '/home/page' : path});
