@@ -57,12 +57,13 @@ export default {
         })
         .then((resp) => {
           console.log("successResponse", resp);
-          if (resp.data.code === "200") {
+          if (resp.data.code === "T") {
             that.$message({
               type: 'success',
               message: resp.data.msg
             });
-            // that.$router.replace("/login");
+            let path = this.$route.query.redirect;
+            that.$router.replace({path: path === '/' || path === undefined ? '/home/page' : path});
           } else {
             that.$message.error(resp.data.msg);
           }
