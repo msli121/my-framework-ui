@@ -52,14 +52,20 @@ export default {
         })
         .then((successResponse) => {
           console.log("successResponse", successResponse);
-          if (successResponse.data.code == 200) {
-            that.$store.commit('login', that.loginForm.username);
-            let path = this.$route.query.redirect;
+          if (successResponse.data.flag == 'T') {
+            that.$store.commit('loginSuccess', successResponse.data.data);
+            let toPath = this.$route.query.redirect;
             that.$message({
               type: 'success',
               message: successResponse.data.msg
             });
-            that.$router.replace({path: path === '/' || path === undefined ? '/home/page' : path});
+            console.log("login toPath ", toPath);
+            console.log("store:::", this.$store.state);
+            if(toPath.startsWith('/admin') || toPath.startsWith('admin')) {
+              toPath = '/admin'
+            } 
+            that.$router.replace({path: toPath === '/' || toPath === undefined ? '/home/page' : toPath});  
+            
           } else {
             that.$message.error(successResponse.data.msg);
           }

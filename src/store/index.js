@@ -5,24 +5,35 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    username: window.localStorage.getItem('username') == null ? '' : JSON.parse(window.localStorage.getItem('username' || '[]')),
-    adminMenus: []
+    username: window.localStorage.getItem('username') == null ? '' : JSON.parse(window.localStorage.getItem('username')),
+    adminMenus: window.sessionStorage.getItem("adminMenus") == null ? [] : JSON.parse(window.sessionStorage.getItem("adminMenus") || '[]'),
+    loginSuccess: window.sessionStorage.getItem("loginSuccess") == null ? false : JSON.parse(window.sessionStorage.getItem("loginSuccess")),
+    userProfile:  window.sessionStorage.getItem("userProfile") == null ? {} : JSON.parse(window.sessionStorage.getItem("userProfile"))
   },
   mutations: {
+
     initAdminMenu (state, menus) {
-      state.adminMenus = menus
+      state.adminMenus = menus;
+      window.sessionStorage.setItem('adminMenus', JSON.stringify(menus));
     },
 
-    login (state, data) {
-      state.username = data
-      window.localStorage.setItem('username', JSON.stringify(data))
+    loginSuccess (state, data) {
+      state.username = data.username;
+      state.userProfile = data;
+      state.loginSuccess =true;
+      window.localStorage.setItem('username', JSON.stringify(data.username));
+      window.sessionStorage.setItem('loginSuccess', JSON.stringify('true'));
+      window.sessionStorage.setItem('userProfile', JSON.stringify(data));
     },
 
     logout (state) {
-      // 注意不能用 null 清除，否则将无法判断 username 里具体的内容
-      state.username = ''
-      window.localStorage.removeItem('username')
-      state.adminMenus = []
+      state.username = '';
+      state.userProfile = {};
+      state.loginSuccess = false;
+      window.localStorage.removeItem('username');
+      window.sessionStorage.removeItem('adminMenus');
+      window.sessionStorage.removeItem('loginSuccess');
+      window.sessionStorage.removeItem('userProfile');
     }
   },
   actions: {}

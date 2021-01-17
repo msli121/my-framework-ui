@@ -7,6 +7,7 @@ import VueAxios from 'vue-axios'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import less from 'less'
+import { Message } from 'element-ui'
 
 Vue.config.productionTip = false
 
@@ -16,60 +17,94 @@ Vue.use(VueAxios, axios)
 
 Vue.use(ElementUI)
 Vue.use(less)
+Vue.prototype.$message = Message;
 
+// 全局守卫路由
 router.beforeEach((to, from, next) => {
-  console.log("username: ", store.state.username, "path: ", to.path)
-  if (store.state.username && to.path.startsWith('/admin')) {
-    console.log(store.state.username, " login admin ", to.path)
-    initAdminMenu(router, store)
-  }
-  if (store.state.username && to.path.startsWith('/login')) {
-    next({})
-  }
-  // 如果前端没有登录信息则直接拦截
-  // 如果有则判断后端是否正常登录（防止构造参数绕过）
-  if (to.meta.requireAuth) {
+
+  console.log("全局守卫： username: ", store.state.username, " ; path: ", to.path);
+
+  if (to.path.startsWith('/admin') || to.path.startsWith('admin')) {
+    // admin login check
+    console.log("admin 全局守卫;", "path:", to.path);
+    if (store.state.loginSuccess) {
+      if (store.state.adminMenus.length > 0) {
+        // 防止重复触发加载菜单操作
+        next();
+      } else {
+        // 加载菜单操作
+        axios.get('/admin/menus').then(res => {
+          if (res && res.data.flag === 'T') {
+            console.log("data:", res.data.data)
+            let fmtRoutes = formatRoutes(res.data.data);
+            router.addRoutes(fmtRoutes);
+            console.log("格式化后的数据：", fmtRoutes, router);
+            store.commit('initAdminMenu', fmtRoutes);
+            next();
+          } else {
+            Vue.prototype.$message.error("验证失败，请重新登录");
+            next({
+              path: '/login',
+              query: { redirect: to.fullPath }
+            })
+          }
+        }).catch(e => {
+          Vue.prototype.$message.error("系统异常，请重新登录");
+          console.log(e);
+          next({
+            path: '/login',
+            query: { redirect: to.fullPath }
+          })
+        })
+      }
+    } else {
+      Vue.prototype.$message.error("验证失败，请重新登录");
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    }
+  } else if (to.path.startsWith('/login')) {
+    // direct to login page
+    next();
+  } else if (to.meta.requireAuth) {
+    // 登录需要授权的页面时，判断后端是否正常登录（防止构造参数绕过）
     if (store.state.username) {
       axios.get('/authentication').then(res => {
         if (res.data.flag === 'T') {
           next()
         } else {
+          Vue.prototype.$message.error("验证失败，请重新登录");
           next({
             path: '/login',
             query: { redirect: to.fullPath }
           })
         }
+      }).catch(e => {
+        Vue.prototype.$message.error("系统异常，请重新登录");
+        console.log(e);
+        next({
+          path: '/login',
+          query: { redirect: to.fullPath }
+        });
       })
     } else {
+      Vue.prototype.$message.error("验证失败，请重新登录");
       next({
         path: '/login',
         query: { redirect: to.fullPath }
       })
     }
   } else {
-    next()
+    // 无其他要求直接路由
+    console.log("无其他要求直接路由");
+    next();
   }
-}
-)
-
-const initAdminMenu = (router, store) => {
-  // 防止重复触发加载菜单操作
-  if (store.state.adminMenus.length > 0) {
-    return
-  }
-  axios.get('/menu').then(res => {
-    if (res && res.data.flag === 'T') {
-      let fmtRoutes = formatRoutes(res.data.data)
-      router.addRoutes(fmtRoutes)
-      store.commit('initAdminMenu', fmtRoutes)
-    }
-  })
-}
-
+})
 
 // 格式化后端接受的路由数据
 const formatRoutes = (routes) => {
-  let formatRoutes = [];
+  let fmtRoutes = [];
   routes.forEach(route => {
     if (route.children) {
       route.children = formatRoutes(route.children)
@@ -86,9 +121,9 @@ const formatRoutes = (routes) => {
       },
       children: route.children
     };
-    formatRoutes.push(fmtRoute);
+    fmtRoutes.push(fmtRoute);
   })
-  return formatRoutes;
+  return fmtRoutes;
 }
 
 new Vue({

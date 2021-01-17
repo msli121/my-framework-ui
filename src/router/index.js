@@ -65,6 +65,12 @@ const routes = [
     component: () => import('@/views/registry.vue')
   },
 
+  {
+    path: '/admin',
+    name: 'adminIndex',
+    component: () => import('@/components/admin/adminIndex.vue')
+  },
+
 
   {
     path: '*',

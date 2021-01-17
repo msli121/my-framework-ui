@@ -51,7 +51,7 @@ export default {
 .header-logo-box {
   position: absolute;
   height: 60px;
-  left: 18%;
+  left: 60px;
   top: 0px;
   width: 200px;
   z-index: 10;
@@ -85,7 +85,7 @@ export default {
 .header-login-box {
   position: absolute;
   height: 60px;
-  right: 18%;
+  right: 60px;
   top: 0px;
   width: 200px;
   z-index: 2;
