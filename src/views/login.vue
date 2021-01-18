@@ -44,7 +44,8 @@ export default {
   },
   methods: {
     login() {
-      let that = this;
+      let that = this
+
       this.axios
         .post("/login", {
           username: this.loginForm.username,
@@ -52,20 +53,19 @@ export default {
         })
         .then((successResponse) => {
           console.log("successResponse", successResponse);
-          if (successResponse.data.flag == 'T') {
+           if (successResponse.data.flag == 'T') {
             that.$store.commit('loginSuccess', successResponse.data.data);
             let toPath = this.$route.query.redirect;
             that.$message({
               type: 'success',
               message: successResponse.data.msg
             });
-            console.log("login toPath ", toPath);
+           console.log("login toPath ", toPath);
             console.log("store:::", this.$store.state);
             if(toPath.startsWith('/admin') || toPath.startsWith('admin')) {
               toPath = '/admin'
             } 
-            that.$router.replace({path: toPath === '/' || toPath === undefined ? '/home/page' : toPath});  
-            
+            that.$router.replace({path: toPath === '/' || toPath === undefined ? '/home/page' : toPath});
           } else {
             that.$message.error(successResponse.data.msg);
           }
