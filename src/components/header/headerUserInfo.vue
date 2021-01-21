@@ -3,14 +3,14 @@
     <div v-if="!loginSuccess" class="header-login-box">
       <el-button
         type="text"
-        style="color: #606266;font-size=16px;font-weight:bold;"
+        style="color: #606266;font-size:16px;font-weight:bold;"
         @click="handleLogin"
         >登录</el-button
       >
       <el-divider direction="vertical" style="width: 2px"></el-divider>
       <el-button
         type="text"
-        style="font-size=16px;font-weight:bold;"
+        style="font-size:16px;font-weight:bold;"
         @click="handleRegistry"
         >注册</el-button
       >
@@ -29,26 +29,14 @@
       <span style="display: inline-block; width: 10px"></span>
 
       <el-dropdown size="small" trigger="click" @command="handleCommand">
-        <span class="el-dropdown-link">
-          {{ userProfile.username
-          }}<i class="el-icon-arrow-down el-icon--right"></i>
+        <span class="el-dropdown-link">{{ userProfile.username }}<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item icon="el-icon-user-solid" command="user_center"
-            >个人中心</el-dropdown-item
-          >
-          <el-dropdown-item icon="el-icon-tickets" command="buy_record"
-            >购买记录</el-dropdown-item
-          >
-          <el-dropdown-item icon="el-icon-medal" command="vip_center"
-            >会员中心</el-dropdown-item
-          >
-          <el-dropdown-item icon="el-icon-switch-button" command="adminConfig"
-            >管理中心</el-dropdown-item
-          >
-          <el-dropdown-item icon="el-icon-switch-button" command="logout"
-            >退出登录</el-dropdown-item
-          >
+          <el-dropdown-item icon="el-icon-user-solid" command="user_center">个人中心</el-dropdown-item>
+          <el-dropdown-item icon="el-icon-tickets" command="buy_record">购买记录</el-dropdown-item>
+          <el-dropdown-item icon="el-icon-medal" command="vip_center">会员中心</el-dropdown-item>
+          <el-dropdown-item icon="el-icon-switch-button" command="adminConfig">管理中心</el-dropdown-item>
+          <el-dropdown-item icon="el-icon-switch-button" command="logout">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -149,14 +137,17 @@ export default {
 .el-dropdown-link {
   cursor: pointer;
   color: #409eff;
+  font-weight: bold;
+  font-size: 16px;
 }
 .el-icon-arrow-down {
-  font-size: 12px;
+  font-size: 14px;
 }
 .demonstration {
   display: block;
   color: #8492a6;
-  font-size: 14px;
+  font-weight: bold;
+  font-size: 16px;
   margin-bottom: 20px;
 }
 </style>

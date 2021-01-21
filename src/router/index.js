@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import ocr from '../views/ocr.vue'
-import pdf from '../views/pdf.vue'
-import home from '../views/home.vue'
-import homePage from '../components/homePage.vue'
+import ocr from '@/views/ocr.vue'
+import pdf from '@/views/pdf.vue'
+import home from '@/views/home.vue'
+import homePage from '@/components/homePage.vue'
+import adminIndex from "@/components/admin/adminIndex";
 
 Vue.use(VueRouter)
 
@@ -68,7 +69,7 @@ const routes = [
   {
     path: '/admin',
     name: 'adminIndex',
-    component: () => import('@/components/admin/adminIndex.vue')
+    component: adminIndex
   },
 
 

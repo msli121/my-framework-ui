@@ -27,26 +27,27 @@ export default {
   height: 60px;
   width: 100%;
   background: #fff;
-  position: fixed;
+  position: fixed; 
   top: 0;
-  z-index: 5;
+  border-bottom: 1px solid #e6e6e6;
+  z-index: 2;
 }
 
 .header-logo-box {
   position: absolute;
   height: 60px;
-  left: 18%;
+  left: 60px;
   top: 0px;
   width: 200px;
-  z-index: 10;
+  z-index: 3;
 }
 
 .header-login-box {
   position: absolute;
   height: 60px;
-  right: 18%;
+  right: 60px;
   top: 0px;
   width: 200px;
-  z-index: 2;
+  z-index: 3;
 }
 </style>

@@ -49,27 +49,30 @@ export default {
   },
   methods: {
     register() {
-      var that = this;
+      let that = this;
       this.axios
         .post("/registry", {
           username: this.loginForm.username,
           password: this.loginForm.password,
         })
-        .then((resp) => {
-          console.log("successResponse", resp);
-          if (resp.data.code === "T") {
+        .then( res => {
+          console.log("successResponse", res);
+          if (res.data.flag === "T") {
+            // 更新store中用户信息
+            that.$store.commit("loginSuccess", res.data.data);
             that.$message({
               type: 'success',
-              message: resp.data.msg
+              message: res.data.msg
             });
             let path = this.$route.query.redirect;
+            // 页面按需跳转
             that.$router.replace({path: path === '/' || path === undefined ? '/home/page' : path});
           } else {
-            that.$message.error(resp.data.msg);
+            that.$message.error(res.data.msg);
           }
         })
-        .catch((failResponse) => {
-          console.log(failResponse);
+        .catch(e => {
+          console.log(e);
           this.$message.error("服务器异常");
         });
     },

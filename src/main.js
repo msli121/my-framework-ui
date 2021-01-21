@@ -24,11 +24,10 @@ Vue.prototype.$message = Message;
 // 全局守卫路由
 router.beforeEach((to, from, next) => {
 
-  // console.log("全局守卫： username: ", store.state.username, " ; path: ", to.path);
-
+  console.log("全局守卫： username: ", store.state.username, " ; path:", to.path);
   if (to.path.startsWith('/admin') || to.path.startsWith('admin')) {
     // admin login check
-    // console.log("admin 全局守卫;", "path:", to.path);
+    console.log("admin 全局守卫;", "path:", to.path);
     if (store.state.loginSuccess) {
       if (store.state.adminMenus.length > 0) {
         // 防止重复触发加载菜单操作
@@ -39,10 +38,10 @@ router.beforeEach((to, from, next) => {
           if (res && res.data.flag === 'T') {
             console.log("data:", res.data.data)
             let fmtRoutes = formatRoutes(res.data.data);
+            console.log("格式化后的数据：", fmtRoutes, router);
             router.addRoutes(fmtRoutes);
-            // console.log("格式化后的数据：", fmtRoutes, router);
             store.commit('initAdminMenu', fmtRoutes);
-            next();
+            next({path: '/admin'});
           } else {
             Vue.prototype.$message.error("验证失败，请重新登录");
             next({

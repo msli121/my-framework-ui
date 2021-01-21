@@ -57,6 +57,15 @@ export default {
   z-index: 10;
 }
 
+.header-login-box {
+  position: absolute;
+  height: 60px;
+  right: 60px;
+  top: 0px;
+  width: 200px;
+  z-index: 2;
+}
+
 .header-nav-box {
   height: 60px;
   border-bottom: 1px solid #e6e6e6;
@@ -80,15 +89,6 @@ export default {
 
 .header-main-box {
   width: 100%;
-}
-
-.header-login-box {
-  position: absolute;
-  height: 60px;
-  right: 60px;
-  top: 0px;
-  width: 200px;
-  z-index: 2;
 }
 
 .router-show-container {
