@@ -27,9 +27,9 @@ export default {
   height: 60px;
   width: 100%;
   background: #fff;
-  position: fixed; 
+  position: relative;
   top: 0;
-  border-bottom: 1px solid #e6e6e6;
+  border-bottom: 2px solid #e6e6e6;
   z-index: 2;
 }
 

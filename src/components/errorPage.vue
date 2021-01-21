@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; width: 100%; background-color: #494949">
+  <div style="height: 100%; width: 100%; background-color: #494949;overflow-y:hidden;">
     <div class="head404"></div>
     <div class="txtbg404">
       <div class="txtbox">
@@ -39,7 +39,7 @@ export default {
   top: 30px;
   left: 60px;
   color: #eee;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 .txtbg404 .txtbox p {
