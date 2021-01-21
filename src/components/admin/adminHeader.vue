@@ -1,31 +1,33 @@
 <template>
-	<div class="header-container">
-		<div>
-			<div class="header-logo-box">
-				<header-logo></header-logo>
-			</div>
-			<div class="header-login-box">
-				<header-user-info></header-user-info>
-			</div>
-		</div>
-	</div>
+  <div class="header-container">
+    <div>
+      <div class="header-logo-box">
+        <header-logo></header-logo>
+      </div>
+      <div class="header-login-box">
+        <header-user-info></header-user-info>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-	import headerLogo from "../headerLogo.vue";
-	import headerUserInfo from "../headerUserInfo.vue";
-	export default {
-    name: 'adminHeader',
-    components: { headerLogo, headerUserInfo },
-  };
+import HeaderLogo from '../header/headerLogo.vue';
+import HeaderUserInfo from '../header/headerUserInfo.vue';
+
+
+export default {
+  name: "adminHeader",
+  components: { HeaderLogo, HeaderUserInfo },
+};
 </script>
 
-<style >
- .header-container {
+<style lang="less" scoped>
+.header-container {
   height: 60px;
   width: 100%;
   background: #fff;
-  position: fixed; 
+  position: fixed;
   top: 0;
   z-index: 5;
 }

@@ -12,7 +12,9 @@ import { Message } from 'element-ui'
 Vue.config.productionTip = false
 
 axios.defaults.baseURL = "http://localhost:8888/api"
+// 允许跨域使用 cookie
 axios.defaults.withCredentials = true
+
 Vue.use(VueAxios, axios)
 
 Vue.use(ElementUI)
@@ -22,11 +24,11 @@ Vue.prototype.$message = Message;
 // 全局守卫路由
 router.beforeEach((to, from, next) => {
 
-  console.log("全局守卫： username: ", store.state.username, " ; path: ", to.path);
+  // console.log("全局守卫： username: ", store.state.username, " ; path: ", to.path);
 
   if (to.path.startsWith('/admin') || to.path.startsWith('admin')) {
     // admin login check
-    console.log("admin 全局守卫;", "path:", to.path);
+    // console.log("admin 全局守卫;", "path:", to.path);
     if (store.state.loginSuccess) {
       if (store.state.adminMenus.length > 0) {
         // 防止重复触发加载菜单操作
@@ -38,7 +40,7 @@ router.beforeEach((to, from, next) => {
             console.log("data:", res.data.data)
             let fmtRoutes = formatRoutes(res.data.data);
             router.addRoutes(fmtRoutes);
-            console.log("格式化后的数据：", fmtRoutes, router);
+            // console.log("格式化后的数据：", fmtRoutes, router);
             store.commit('initAdminMenu', fmtRoutes);
             next();
           } else {

@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import headerLogo from "../components/headerLogo.vue";
-import headerUserInfo from "../components/headerUserInfo.vue";
+import headerLogo from "../components/header/headerLogo.vue";
+import headerUserInfo from "../components/header/headerUserInfo.vue";
 
 export default {
   name: "home",

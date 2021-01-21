@@ -9,6 +9,7 @@
     active-text-color="#ffd04b"
     :collapse="isCollapse"
 >
+    
     <!--index 没有用但是必需字段-->
     <el-submenu
       v-for="(item, i) in adminMenus"

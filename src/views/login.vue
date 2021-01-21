@@ -1,6 +1,11 @@
 <template>
   <div class="login-body-container">
-    <el-form class="login-container" :model="loginForm" label-position="left" label-width="0px">
+    <el-form
+      class="login-container"
+      :model="loginForm"
+      label-position="left"
+      label-width="0px"
+    >
       <h3 class="login_title">系统登录</h3>
       <el-form-item label="">
         <el-input
@@ -18,11 +23,8 @@
           placeholder="密码"
         ></el-input>
       </el-form-item>
-      <el-form-item label="" style="width: 100%;">
-        <el-button
-          type="primary"
-          style="width: 100%;"
-          v-on:click="login"
+      <el-form-item label="" style="width: 100%">
+        <el-button type="primary" style="width: 100%" v-on:click="login"
           >登录</el-button
         >
       </el-form-item>
@@ -44,7 +46,7 @@ export default {
   },
   methods: {
     login() {
-      let that = this
+      let that = this;
 
       this.axios
         .post("/login", {
@@ -53,25 +55,32 @@ export default {
         })
         .then((successResponse) => {
           console.log("successResponse", successResponse);
-           if (successResponse.data.flag == 'T') {
-            that.$store.commit('loginSuccess', successResponse.data.data);
+          if (successResponse.data.flag == "T") {
+            that.$store.commit("loginSuccess", successResponse.data.data);
             let toPath = this.$route.query.redirect;
             that.$message({
-              type: 'success',
-              message: successResponse.data.msg
+              type: "success",
+              message: successResponse.data.msg,
             });
-           console.log("login toPath ", toPath);
-            console.log("store:::", this.$store.state);
-            if(toPath.startsWith('/admin') || toPath.startsWith('admin')) {
-              toPath = '/admin'
-            } 
-            that.$router.replace({path: toPath === '/' || toPath === undefined ? '/home/page' : toPath});
+            console.log("login toPath:", toPath)
+            if (toPath) {
+              console.log("toPath startsWith:", toPath.startsWith("/admin"))
+              if (toPath.startsWith("/admin") || toPath.startsWith("admin")) {
+                toPath = "/admin";
+              }
+            }
+
+            that.$router.replace({
+              path:
+                toPath === "/" || toPath === undefined ? "/home/page" : toPath,
+            });
+
           } else {
             that.$message.error(successResponse.data.msg);
           }
         })
         .catch((failResponse) => {
-          console.log(failResponse);
+          console.log("login error", failResponse);
           that.$message.error("服务器异常");
         });
     },

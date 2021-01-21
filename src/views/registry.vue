@@ -55,9 +55,9 @@ export default {
           username: this.loginForm.username,
           password: this.loginForm.password,
         })
-        .then(resp => {
+        .then((resp) => {
           console.log("successResponse", resp);
-          if (resp.data.flag === "T") {
+          if (resp.data.code === "T") {
             that.$message({
               type: 'success',
               message: resp.data.msg
