@@ -22,6 +22,8 @@
                 v-model="scope.row.enabled"
                 active-color="#13ce66"
                 inactive-color="#ff4949"
+                active-value = "1"
+                inactive-value = "0"
                 @change="(value) => commitStatusChange(value, scope.row)">
             </el-switch>
           </template>
@@ -50,7 +52,7 @@
   </div>
 </template>
 <script>
-import {getSysAllUser} from "../../../api/api";
+  import {getSysAllUser, updateUserSate} from "../../../api/api";
 
 export default {
   name: "adminUserBasic",
@@ -65,6 +67,7 @@ export default {
     }
   },
   mounted() {
+    this.getAllUser();
   },
   computed: {
     tableHeight() {
@@ -85,32 +88,33 @@ export default {
     },
     commitStatusChange(value, user) {
       if (user.username !== 'admin') {
-        this.axios.put('/admin/user/status', {
+        updateUserSate({
           enabled: value,
-          username: user.username
-        }).then(resp => {
-          if (resp && resp.data.code === 200) {
-            if (value) {
-              this.$message('用户 [' + user.username + '] 已启用')
+          username: user.username,
+          userId: user.id
+        }).then(res => {
+          if (res && res.flag === "T") {
+            if (value === 1) {
+              this.$message.success('用户 [' + user.username + '] 已启用')
             } else {
-              this.$message('用户 [' + user.username + '] 已禁用')
+              this.$message.success('用户 [' + user.username + '] 已禁用')
             }
           }
         })
       } else {
-        user.enabled = true
-        this.$alert('不能禁用管理员账户')
+        user.enabled = 1;
+        this.$message.error('不能禁用管理员账户')
       }
     },
 
     editUser (user) {
-      this.dialogFormVisible = true
-      this.selectedUser = user
+      this.addUserDialogShow = true;
+      this.selectedUser = user;
       let roleIds = []
       for (let i = 0; i < user.roles.length; i++) {
         roleIds.push(user.roles[i].id)
       }
-      this.selectedRolesIds = roleIds
+      this.selectedRoleCodeList = roleIds;
     },
 
     resetPassword (username) {

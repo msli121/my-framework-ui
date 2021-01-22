@@ -31,3 +31,7 @@ export function getCurrentUserMenus() {
 export function getSysAllUser() {
   return get("/admin/user/all");
 }
+// 设置用户状态
+export function updateUserSate(data) {
+  return post("/admin/user/status", data)
+}

@@ -4,7 +4,9 @@ import ocr from '@/views/ocr.vue'
 import pdf from '@/views/pdf.vue'
 import home from '@/views/home.vue'
 import homePage from '@/components/homePage.vue'
-import adminIndex from "@/components/admin/adminIndex";
+import adminIndex from "@/components/admin/adminIndex"
+import login from "@/views/login"
+import registry from  "@/views/registry.vue"
 
 Vue.use(VueRouter)
 
@@ -57,18 +59,21 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('@/views/login.vue')
+    component: login
   },
 
   {
     path: '/registry',
     name: 'registry',
-    component: () => import('@/views/registry.vue')
+    component: registry
   },
 
   {
     path: '/admin',
     name: 'adminIndex',
+    meta: {
+      requireAuth: true
+    },
     component: adminIndex
   },
 
