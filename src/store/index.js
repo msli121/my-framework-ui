@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import router from '../router/index'
 
 Vue.use(Vuex)
 
@@ -8,12 +9,14 @@ export default new Vuex.Store({
     username: window.localStorage.getItem('username') == null ? '' : JSON.parse(window.localStorage.getItem('username')),
     adminMenus: window.sessionStorage.getItem("adminMenus") == null ? [] : JSON.parse(window.sessionStorage.getItem("adminMenus") || '[]'),
     loginSuccess: window.sessionStorage.getItem("loginSuccess") == null ? false : JSON.parse(window.sessionStorage.getItem("loginSuccess")),
-    userProfile:  window.sessionStorage.getItem("userProfile") == null ? {} : JSON.parse(window.sessionStorage.getItem("userProfile"))
+    userProfile:  window.sessionStorage.getItem("userProfile") == null ? {} : JSON.parse(window.sessionStorage.getItem("userProfile")),
+    dynamicRoute: false,
   },
   mutations: {
 
     initAdminMenu (state, menus) {
       state.adminMenus = menus;
+      state.dynamicRoute = true;
       window.sessionStorage.setItem('adminMenus', JSON.stringify(menus));
     },
 
@@ -36,6 +39,10 @@ export default new Vuex.Store({
       window.sessionStorage.removeItem('userProfile');
     }
   },
-  actions: {}
+  actions: {
+    AddNewRoutes(context, newRoutes) {
+      router.addRoutes(newRoutes);
+    }
+  }
 })
 

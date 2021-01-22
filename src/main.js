@@ -2,20 +2,21 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import axios from 'axios'
-import VueAxios from 'vue-axios'
+// import axios from 'axios'
+// import VueAxios from 'vue-axios'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import less from 'less'
 import { Message } from 'element-ui'
+import {getCurrentUserMenus, checkAuthentication} from "./api/api";
 
 Vue.config.productionTip = false
 
-axios.defaults.baseURL = "http://localhost:8888/api"
+// axios.defaults.baseURL = "http://localhost:8888/api"
 // 允许跨域使用 cookie
-axios.defaults.withCredentials = true
+// axios.defaults.withCredentials = true
 
-Vue.use(VueAxios, axios)
+// Vue.use(VueAxios, axios)
 
 Vue.use(ElementUI)
 Vue.use(less)
@@ -31,16 +32,28 @@ router.beforeEach((to, from, next) => {
     if (store.state.loginSuccess) {
       if (store.state.adminMenus.length > 0) {
         // 防止重复触发加载菜单操作
-        next();
+        console.log("admin menus 不为空 ", store.state.adminMenus, router);
+        if(!store.state.dynamicRoute) {
+          let newRoutes = formatRoutes(store.state.adminMenus);
+          console.log("newRoutes ", newRoutes);
+          console.log("页面刷新了，重新进行动态路由");
+          store.dispatch('AddNewRoutes', newRoutes).then(() => {
+            next({path: to.path});
+          }).catch( () => {
+            next({path: "/404"});
+          })
+        } else {
+          next({path: to.path});
+        }
       } else {
         // 加载菜单操作
-        axios.get('/admin/menus').then(res => {
-          if (res && res.data.flag === 'T') {
-            console.log("data:", res.data.data)
-            let fmtRoutes = formatRoutes(res.data.data);
+        getCurrentUserMenus().then(res => {
+          if (res && res.flag === 'T') {
+            store.commit('initAdminMenu', res.data);
+            console.log("data:", res.data)
+            let fmtRoutes = formatRoutes(res.data);
             console.log("格式化后的数据：", fmtRoutes, router);
             router.addRoutes(fmtRoutes);
-            store.commit('initAdminMenu', fmtRoutes);
             next({path: '/admin'});
           } else {
             Vue.prototype.$message.error("验证失败，请重新登录");
@@ -71,8 +84,8 @@ router.beforeEach((to, from, next) => {
   } else if (to.meta.requireAuth) {
     // 登录需要授权的页面时，判断后端是否正常登录（防止构造参数绕过）
     if (store.state.username) {
-      axios.get('/authentication').then(res => {
-        if (res.data.flag === 'T') {
+      checkAuthentication.then(res => {
+        if (res.flag === 'T') {
           next()
         } else {
           Vue.prototype.$message.error("验证失败，请重新登录");

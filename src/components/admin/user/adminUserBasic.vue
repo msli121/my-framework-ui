@@ -8,23 +8,14 @@
       </el-breadcrumb>
     </el-row>
     <el-card style="margin: 18px 10px;width: 95%">
-      <el-table
-          :data="users"
-          stripe
-          :default-sort="{prop: 'id', order: 'ascending'}"
-          style="width: 100%"
-          :max-height="tableHeight">
+      <el-table :data="users" stripe :default-sort="{prop: 'id', order: 'ascending'}"
+                style="width: 100%" :max-height="tableHeight">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="id" label="id" sortable width="100">
-        </el-table-column>
-        <el-table-column prop="username" label="用户名" fit>
-        </el-table-column>
-        <el-table-column prop="name" label="真实姓名" fit>
-        </el-table-column>
-        <el-table-column prop="phone" label="手机号" fit>
-        </el-table-column>
-        <el-table-column prop="email" label="邮箱" show-overflow-tooltip fit>
-        </el-table-column>
+        <el-table-column prop="id" label="id" sortable width="100"></el-table-column>
+        <el-table-column prop="username" label="用户名" fit></el-table-column>
+<!--        <el-table-column prop="name" label="真实姓名" fit></el-table-column>-->
+        <el-table-column prop="phone" label="手机号" fit></el-table-column>
+        <el-table-column prop="email" label="邮箱" show-overflow-tooltip fit></el-table-column>
         <el-table-column label="状态" sortable width="100">
           <template slot-scope="scope">
             <el-switch
@@ -35,9 +26,7 @@
             </el-switch>
           </template>
         </el-table-column>
-        <el-table-column
-            label="操作"
-            width="120">
+        <el-table-column label="操作" width="120">
           <template slot-scope="scope">
             <el-button
                 @click="editUser(scope.row)"
@@ -61,12 +50,15 @@
   </div>
 </template>
 <script>
+import {getSysAllUser} from "../../../api/api";
+
 export default {
   name: "adminUserBasic",
   data() {
     return {
       users: [],
       roles: [],
+      tableLoading: false,
       addUserDialogShow: false,
       selectedUser: [],
       selectedRoleCodeList: []
@@ -82,10 +74,13 @@ export default {
   methods: {
     getAllUser() {
       let that = this;
-      this.axios.get("/admin/user/all").then(res => {
-        if(res.data.flag === "T") {
-          that.users = res.data.data;
+      getSysAllUser().then(res => {
+        if(res.flag === "T") {
+          that.users = res.data;
         }
+      }).catch(e => {
+        console.log("获取所有user失败！");
+        console.log(e);
       })
     },
     commitStatusChange(value, user) {
@@ -107,6 +102,26 @@ export default {
         this.$alert('不能禁用管理员账户')
       }
     },
+
+    editUser (user) {
+      this.dialogFormVisible = true
+      this.selectedUser = user
+      let roleIds = []
+      for (let i = 0; i < user.roles.length; i++) {
+        roleIds.push(user.roles[i].id)
+      }
+      this.selectedRolesIds = roleIds
+    },
+
+    resetPassword (username) {
+      this.$axios.put('/admin/user/password', {
+        username: username
+      }).then(resp => {
+        if (resp && resp.data.code === 200) {
+          this.$alert('密码已重置为 123')
+        }
+      })
+    }
   }
 }
 </script>

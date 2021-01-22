@@ -72,6 +72,11 @@ const routes = [
     component: adminIndex
   },
 
+  {
+    path: '/404',
+    name: '404',
+    component: () => import('@/components/errorPage.vue')
+  },
 
   {
     path: '*',

@@ -7,16 +7,12 @@
     background-color="#545c64"
     text-color="#fff"
     active-text-color="#ffd04b"
-    :collapse="isCollapse"
->
-    
-    <!--index 没有用但是必需字段-->
+    :collapse="isCollapse">
     <el-submenu
       v-for="(item, i) in adminMenus"
       :key="i"
       :index="i.toString()"
-      style="text-align: left"
-    >
+      style="text-align: left">
       <span slot="title" style="font-size: 17px">
         <i :class="item.icon"></i>
         {{ item.nameZh }}

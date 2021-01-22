@@ -35,6 +35,7 @@
   </body>
 </template>
 <script>
+import {registry} from  "../api/api"
 export default {
   name: "registry",
   data() {
@@ -50,25 +51,21 @@ export default {
   methods: {
     register() {
       let that = this;
-      this.axios
-        .post("/registry", {
-          username: this.loginForm.username,
-          password: this.loginForm.password,
-        })
+      registry(this.loginForm.username, this.loginForm.password)
         .then( res => {
           console.log("successResponse", res);
-          if (res.data.flag === "T") {
+          if (res.flag === "T") {
             // 更新store中用户信息
-            that.$store.commit("loginSuccess", res.data.data);
+            that.$store.commit("loginSuccess", res.data);
             that.$message({
               type: 'success',
-              message: res.data.msg
+              message: res.msg
             });
             let path = this.$route.query.redirect;
             // 页面按需跳转
             that.$router.replace({path: path === '/' || path === undefined ? '/home/page' : path});
           } else {
-            that.$message.error(res.data.msg);
+            that.$message.error(res.msg);
           }
         })
         .catch(e => {

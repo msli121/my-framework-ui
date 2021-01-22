@@ -33,8 +33,10 @@
 </template>
 
 <script>
+import { login } from "../api/api"
+
 export default {
-  name: "Login",
+  name: "login",
   data() {
     return {
       loginForm: {
@@ -47,20 +49,14 @@ export default {
   methods: {
     login() {
       let that = this;
-
-      this.axios
-        .post("/login", {
-          username: this.loginForm.username,
-          password: this.loginForm.password,
-        })
-        .then((successResponse) => {
-          console.log("successResponse", successResponse);
-          if (successResponse.data.flag == "T") {
-            that.$store.commit("loginSuccess", successResponse.data.data);
+      login(this.loginForm.username, this.loginForm.password).then(res => {
+          console.log("successResponse", res);
+          if (res.flag === "T") {
+            that.$store.commit("loginSuccess", res.data);
             let toPath = this.$route.query.redirect;
             that.$message({
               type: "success",
-              message: successResponse.data.msg,
+              message: res.msg,
             });
             console.log("login toPath:", toPath)
             if (toPath) {
@@ -76,11 +72,11 @@ export default {
             });
 
           } else {
-            that.$message.error(successResponse.data.msg);
+            that.$message.error(res.msg);
           }
         })
-        .catch((failResponse) => {
-          console.log("login error", failResponse);
+        .catch( e => {
+          console.log("login error", e);
           that.$message.error("服务器异常");
         });
     },

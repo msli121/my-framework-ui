@@ -44,6 +44,9 @@
 </template>
 
 <script>
+// import { logout } from "../../api/api.js"
+import {logout} from "../../api/api";
+
 export default {
   name: "headerUserInfo",
   data() {
@@ -87,10 +90,8 @@ export default {
     },
     handleCommand(command) {
       if (command === "logout") {
-        this.axios
-          .get("/logout")
-          .then((res) => {
-            if (res.data.flag === "T") {
+        logout().then((res) => {
+            if (res.flag === "T") {
               this.$store.commit("logout");
               this.$message.info("退出登录");
               this.$router.replace({ path: "/home/page" });
