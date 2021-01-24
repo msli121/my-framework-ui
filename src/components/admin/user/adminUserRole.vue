@@ -58,21 +58,22 @@
         <el-form-item label="菜单配置" label-width="120px" prop="menusTree">
           <el-tree
               :data="menusTree"
-              :props="treeProps"
+              :props="menuTreeProps"
               show-checkbox
               :default-checked-keys="selectedMenuCodes"
               node-key="menuCode"
-              ref="tree">
+              ref="menuTree">
           </el-tree>
         </el-form-item>
-        <el-form-item label="功能配置" label-width="120px" prop="menusTree">
+
+        <el-form-item label="功能配置" label-width="120px" prop="permissionsTree">
           <el-tree
-              :data="menusTree"
-              :props="treeProps"
+              :data="permissionsTree"
+              :props="permissionTreeProp"
               show-checkbox
-              :default-checked-keys="selectedMenuCodes"
-              node-key="menuCode"
-              ref="tree">
+              :default-checked-keys="selectedPermissionCodes"
+              node-key="permissionCode"
+              ref="permissionTree">
           </el-tree>
         </el-form-item>
       </el-form>
@@ -84,7 +85,14 @@
   </div>
 </template>
 <script>
-import {editOrAddRole, getSysAllMenu, getSysAllMenuWithTree, getSysAllPermission, getSysAllRole} from "@/api/api";
+import {
+  editOrAddRole,
+  getSysAllMenu,
+  getSysAllMenuWithTree,
+  getSysAllPermission,
+  getSysAllPermissionWithTree,
+  getSysAllRole
+} from "@/api/api";
 
 export default {
   name: 'adminUserRole',
@@ -93,24 +101,31 @@ export default {
       dialogFormVisible: false,
       roles: [],
       permissions: [],
+      permissionsTree: [],
+      permissionTreeProp: {
+        label: 'nameZh',
+        children: 'children'
+      },
       menus: [],
       menusTree: [],
+      menuTreeProps: {
+        label: 'nameZh',
+        children: 'children'
+      },
       selectedRole: [],
       selectedPermissionCodes: [],
       selectedMenuCodes: [],
-      treeProps: {
-        id: 'menuCode',
-        label: 'nameZh',
-        children: 'children'
-      }
     }
   },
 
   mounted() {
     this.getAllRole();
+
     this.getAllMenu();
     this.getAllMenuWithTree();
+
     this.getAllPermission();
+    this.getAllPermissionWithTree();
   },
 
   computed: {
@@ -139,6 +154,17 @@ export default {
         }
       }).catch(e => {
         console.log("获取所有权限失败！");
+        console.log(e);
+      })
+    },
+
+    getAllPermissionWithTree() {
+      getSysAllPermissionWithTree().then(res => {
+        if(res.flag === "T") {
+          this.permissionsTree = res.data;
+        }
+      }).catch(e => {
+        console.log("获取所有菜单失败！");
         console.log(e);
       })
     },
@@ -180,11 +206,7 @@ export default {
       // console.log("selected role", role);
       this.dialogFormVisible = true;
       this.selectedRole = role;
-      let permissionCodes = [];
-      for (let i = 0; i < role.permissions.length; i++) {
-        permissionCodes.push(role.permissions[i].permissionCode)
-      }
-      this.selectedPermissionCodes = permissionCodes;
+
       let menuCodes = [];
       for(let i=0; i<role.menus.length; i++) {
         menuCodes.push(role.menus[i].menuCode);
@@ -193,10 +215,21 @@ export default {
         }
       }
       this.selectedMenuCodes = menuCodes;
-      // 判断树是否已经加载，第一次打开对话框前树不存在，会报错。所以需要设置 default-checked
-      if(this.$refs.tree) {
-        this.$refs.tree.setCheckedKeys(menuCodes);
+      // 判断菜单树是否已经加载，第一次打开对话框前树不存在，会报错。所以需要设置 default-checked
+      if(this.$refs.menuTree) {
+        this.$refs.menuTree.setCheckedKeys(menuCodes);
       }
+
+      let permissionCodes = [];
+      for (let i = 0; i < role.permissions.length; i++) {
+        permissionCodes.push(role.permissions[i].permissionCode)
+      }
+      this.selectedPermissionCodes = permissionCodes;
+      // 判断权限树是否已经加载，设置 default-checked
+      if(this.$refs.permissionTree) {
+        this.$refs.permissionTree.setCheckedKeys(permissionCodes);
+      }
+
     },
 
     onSubmit(role) {
