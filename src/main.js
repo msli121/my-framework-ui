@@ -8,7 +8,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import less from 'less'
 import { Message } from 'element-ui'
-import {getCurrentUserMenus, checkAuthentication} from "./api/api";
+import {checkAuthentication, getCurrentUserMenusWithTree} from "./api/api";
 
 Vue.config.productionTip = false;
 
@@ -136,7 +136,7 @@ const initAdminMenu = (router, store) => {
     return
   }
   // 加载菜单操作
-  getCurrentUserMenus().then(res => {
+  getCurrentUserMenusWithTree().then(res => {
     if (res && res.flag === "T") {
       let newRoutes = formatRoutes(res.data)
       router.addRoutes(newRoutes)

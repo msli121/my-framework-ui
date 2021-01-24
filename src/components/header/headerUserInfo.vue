@@ -1,8 +1,7 @@
 <template>
   <div class="user-info-container">
     <div v-if="!loginSuccess" class="header-login-box">
-      <el-button
-        type="text"
+      <el-button type="text"
         style="color: #606266;font-size:16px;font-weight:bold;"
         @click="handleLogin"
         >登录</el-button
@@ -84,8 +83,8 @@ export default {
 
     handleRegistry() {
       this.$router.push({
-        path: "/registry",
-        query: { redirect: this.$route.path },
+        path: "/login",
+        query: { redirect: this.$route.path, type: "registry" },
       });
     },
     handleCommand(command) {

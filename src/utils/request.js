@@ -8,15 +8,6 @@ const instance = axios.create({
 });
 instance.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
 
-// axios 配置
-// axios.defaults.timeout = 8000
-// // 基础路径
-// axios.defaults.baseURL = "http://localhost:8888/api"
-// // 允许跨域使用 cookie
-// axios.defaults.withCredentials = true
-// // 设置post请求头
-// axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
-
 // request 拦截器
 
 // response 拦截器
