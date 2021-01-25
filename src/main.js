@@ -8,7 +8,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import less from 'less'
 import { Message } from 'element-ui'
-import {checkAuthentication, getCurrentUserMenusWithTree} from "./api/api";
+import {checkAuthentication, getCurrentUserMenusWithTree} from "./base/api";
 
 Vue.config.productionTip = false;
 

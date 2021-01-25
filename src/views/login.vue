@@ -102,7 +102,7 @@
 </template>
 
 <script>
-import { login } from "../api/api"
+  import {login, registry} from "../base/api"
 import wxLogin from 'vue-wxlogin'
 
 export default {
@@ -172,15 +172,36 @@ export default {
         });
     },
 
-    registry() {
-
+    register() {
+      let that = this;
+      registry(this.loginForm.username, this.loginForm.password)
+          .then( res => {
+            console.log("successResponse", res);
+            if (res.flag === "T") {
+              // 更新store中用户信息
+              that.$store.commit("loginSuccess", res.data);
+              that.$message({
+                type: 'success',
+                message: res.msg
+              });
+              let path = this.$route.query.redirect;
+              // 页面按需跳转
+              that.$router.replace({path: path === '/' || path === undefined ? '/home/page' : path});
+            } else {
+              that.$message.error(res.msg);
+            }
+          })
+          .catch(e => {
+            console.log(e);
+            this.$message.error("服务器异常");
+          });
     },
 
     handleClick() {
 
     },
     handleForgetPassword() {
-
+      this.$message.error("该功能暂未实现");
     },
   },
 };

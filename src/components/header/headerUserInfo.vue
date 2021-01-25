@@ -43,8 +43,8 @@
 </template>
 
 <script>
-// import { logout } from "../../api/api.js"
-import {logout} from "../../api/api";
+// import { logout } from "../../base/api.js"
+import {logout} from "../../base/api";
 
 export default {
   name: "headerUserInfo",

@@ -35,7 +35,7 @@
   </body>
 </template>
 <script>
-import {registry} from  "../api/api"
+import {registry} from "../base/api"
 export default {
   name: "registry",
   data() {

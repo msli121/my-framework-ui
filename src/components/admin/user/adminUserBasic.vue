@@ -71,7 +71,7 @@
   </div>
 </template>
 <script>
-import {editUserInfo, getSysAllRole, getSysAllUser, updateUserStatus} from "../../../api/api";
+import {editUserInfo, getSysAllRole, getSysAllUser, updateUserStatus} from "../../../base/api";
 
 export default {
   name: "adminUserBasic",

@@ -92,7 +92,7 @@ import {
   getSysAllPermission,
   getSysAllPermissionWithTree,
   getSysAllRole
-} from "@/api/api";
+} from "@/base/api";
 
 export default {
   name: 'adminUserRole',

@@ -102,7 +102,7 @@ export default {
 }
 
 .production-list-bg {
-  background-image: url(/images/production-list-bg.jpg);
+  background-image: url("../assets/images/production-list-bg.jpg");
   background-size: 100%;
   background-color: #edeeef;
   height: 540px;

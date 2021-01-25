@@ -72,7 +72,7 @@
   </div>
 </template>
 <script>
-import {editOrAddPermission, getSysAllPermission, updatePermissionStatus} from "@/api/api";
+import {editOrAddPermission, getSysAllPermission, updatePermissionStatus} from "@/base/api";
 
 export default {
   name: 'adminUserRole',
