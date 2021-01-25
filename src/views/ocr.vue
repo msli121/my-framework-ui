@@ -23,18 +23,28 @@
       </div>
       <div class="demo-show-container">
         <h2>功能演示</h2>
-        <div class="show-form-container">
-          <h3>上传图片</h3>
-          <el-upload
-              class="avatar-uploader"
-              action=""
-              :auto-upload="false"
-              :on-change="imgBroadcastChange"
-              accept="image/jpg,image/png,image/jpeg"
-              :show-file-list="false"
-          > <img v-if="showForm.imageUrl" :src="showForm.imageUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
-          </el-upload>
+        <div class="show-container">
+<!--          <h3>上传图片</h3>-->
+          <div class="upload-file">
+            <el-upload
+                drag
+                :limit="2"
+                accept="image/jpg,image/png,image/jpeg"
+                action=""
+                :auto-upload="false"
+                :show-file-list="true"
+                :on-remove="handleRemove"
+                :on-change="fileChange">
+              <el-image v-if="imageUrl" style="width: 100%; height: 100%"
+                  :src="imageUrl" fit="scaleDown"></el-image>
+<!--              <img v-if="imageUrl" :src="imageUrl" class="image-container"/>-->
+              <div v-else>
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__tip" slot="tip">只能上传jpg/png/jpeg文件，且不超过2MB</div>
+              </div>
+            </el-upload>
+          </div>
         </div>
       </div>
     </div>
@@ -50,12 +60,46 @@ export default {
   mixins: [baseMixin],
   data() {
     return {
-     showForm: {
-       imageUrl: ""
-     }
+      imageUrl: '',
+      proofImage: ""
     }
   },
   methods: {
+    fileChange(file, fileList) {
+      let that = this;
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if(fileList.length >= 2) {
+        this.$message.error("只能上传一张图片")
+        return
+      }
+      if(isLt2M) {
+        this.transferImag2Base64(file.raw).then(res => {
+          console.log("base64 result ", res);
+          that.imageUrl = res;
+        }).catch(e => {
+          this.$message.error("上传失败，请重试");
+          console.log(e);
+        })
+      } else {
+        this.$message.error('图片大小不能超过 2MB!')
+      }
+    },
+
+    transferImag2Base64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = function() { // 图片转base64完成后返回reader对象
+          resolve(reader.result)
+        }
+        reader.onerror = reject
+      })
+    },
+
+    handleRemove(file, fileList) {
+      console.log(file);
+      console.log(fileList.length, fileList);
+    },
   }
 }
 </script>
@@ -117,15 +161,6 @@ export default {
     font-weight: bold;
     line-height: 1.5;
   }
-
-  .show-form-container > h3 {
-     font-size: 18px;
-     color: #333333;
-     text-align: left;
-     font-weight: bold;
-     line-height: 1.5;
-   }
-
   .function-list-body {
     max-width: 100%;
     display: flex;
@@ -155,34 +190,25 @@ export default {
   .demo-show-container {
     width: 1200px;
     margin: 0 auto;
-    height: 600px;
+    height: 800px;
   }
-
-  .avatar-uploader {
-    border: 1px dashed #d9d9d9;
+  .show-container {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    flex-flow: nowrap;
+    justify-content: left;
+    align-items: center;
+    border: 1px dashed #f68084;
     border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    img {
-      object-fit: contain;  //（保持纵横比缩放图片，使图片的长边能完全显示出来）
-    }
+  }
+  .upload-file {
+    width: 400px;
+    height: 300px;
+    text-align:center;
+    align-items: center;
+    display: flex;
+    margin-left: 20px;
   }
 
-  .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
-  }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px;
-    text-align: center;
-  }
-  .avatar {
-    width: 178px;
-    height: 178px;
-    display: block;
-  }
 </style>
