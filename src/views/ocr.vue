@@ -24,7 +24,6 @@
       <div class="demo-show-container">
         <h2>功能演示</h2>
         <div class="show-container">
-<!--          <h3>上传图片</h3>-->
           <div class="upload-file">
             <el-upload
                 drag
@@ -37,13 +36,16 @@
                 :on-change="fileChange">
               <el-image v-if="imageUrl" style="width: 100%; height: 100%"
                   :src="imageUrl" fit="scaleDown"></el-image>
-<!--              <img v-if="imageUrl" :src="imageUrl" class="image-container"/>-->
-              <div v-else>
+              <div v-else class="icon-container">
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                 <div class="el-upload__tip" slot="tip">只能上传jpg/png/jpeg文件，且不超过2MB</div>
               </div>
             </el-upload>
+          </div>
+          <div class="show-result"  v-loading="showLoading"
+               element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+
           </div>
         </div>
       </div>
@@ -54,6 +56,7 @@
 <script>
   import Icon from 'vue-svg-icon/Icon'
   import baseMixin  from "../base/baseMixin";
+  import {uploadSinglePicture} from "../base/api";
 export default {
   name: "ocr",
   components: {Icon},
@@ -61,28 +64,68 @@ export default {
   data() {
     return {
       imageUrl: '',
-      proofImage: ""
+      proofImage: "",
+      showLoading: false,
     }
   },
   methods: {
     fileChange(file, fileList) {
+      console.log("fileChange", file);
       let that = this;
-      const isLt2M = file.size / 1024 / 1024 < 2;
       if(fileList.length >= 2) {
-        this.$message.error("只能上传一张图片")
-        return
+        // 数组清空
+        fileList.splice(0, fileList.length);
+        console.log("数组已经清空");
+        fileList.push(file);
+        console.log("已经添加file", file);
       }
-      if(isLt2M) {
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
+      if(isLt2M && isAllowedType) {
         this.transferImag2Base64(file.raw).then(res => {
-          console.log("base64 result ", res);
+          let base64 = res.split(",");
+          console.log("base64 result ", base64);
+          let requestBody = {
+            fileName: file.name,
+            fileSize: file.size,
+            fileType: file.raw.type,
+            fileData: base64[1]
+          };
+          that.showLoading = true;
           that.imageUrl = res;
+          uploadSinglePicture(requestBody).then(data => {
+            if(data.flag === "T") {
+              console.log("上传成功！！！！", data);
+            } else {
+              that.$message.error(data.msg);
+            }
+            that.showLoading = false;
+          }).catch( error => {
+            // 数组清空
+            fileList.splice(0, fileList.length);
+            // 图片清空
+            that.imageUrl = "";
+            that.showLoading = false;
+            that.$message.error("上传失败，请重试");
+            console.log(error);
+          })
         }).catch(e => {
+          // 数组清空
+          fileList.splice(0, fileList.length);
+          // 图片清空
+          that.imageUrl = "";
+          that.showLoading = false;
           this.$message.error("上传失败，请重试");
           console.log(e);
         })
       } else {
-        this.$message.error('图片大小不能超过 2MB!')
+        // 数组清空
+        fileList.splice(0, fileList.length);
+        // 图片清空
+        that.imageUrl = "";
+        this.$message.error('请选择正确格式图片，大小不能超过 2MB')
       }
+
     },
 
     transferImag2Base64(file) {
@@ -97,8 +140,10 @@ export default {
     },
 
     handleRemove(file, fileList) {
-      console.log(file);
-      console.log(fileList.length, fileList);
+      // 数组清空
+      fileList.splice(0, fileList.length);
+      // 图片清空
+      this.imageUrl = "";
     },
   }
 }
@@ -190,25 +235,42 @@ export default {
   .demo-show-container {
     width: 1200px;
     margin: 0 auto;
-    height: 800px;
+    min-height: 700px;
   }
   .show-container {
     width: 100%;
-    height: 500px;
+    min-height: 600px;
     display: flex;
     flex-flow: nowrap;
-    justify-content: left;
+    justify-content: space-between;
     align-items: center;
     border: 1px dashed #f68084;
+    padding: 0 20px 0px 20px;
     border-radius: 6px;
   }
   .upload-file {
-    width: 400px;
-    height: 300px;
     text-align:center;
     align-items: center;
     display: flex;
-    margin-left: 20px;
   }
 
+  /deep/ .el-upload-dragger {
+    height: 500px;
+    width: 580px;
+  }
+  .icon-container {
+    height: 80%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .show-result {
+    height: 500px;
+    width: 580px;
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    box-sizing: border-box;
+    overflow: auto;
+  }
 </style>

@@ -93,3 +93,11 @@ export function editOrAddPermission(data) {
 export function updatePermissionStatus(data) {
   return post("/admin/permission/status", data)
 }
+
+/**
+ * 业务 API
+ */
+// 上传单张照片
+export function uploadSinglePicture(data) {
+  return post("/ocr/single", data)
+}
