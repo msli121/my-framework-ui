@@ -55,12 +55,13 @@
 
 <script>
   import Icon from 'vue-svg-icon/Icon'
-  import baseMixin  from "../base/baseMixin";
+  import { baseMixin }  from "../base/baseMixin";
   import {uploadSinglePicture} from "../base/api";
 export default {
   name: "ocr",
   components: {Icon},
   mixins: [baseMixin],
+
   data() {
     return {
       imageUrl: '',
@@ -189,7 +190,7 @@ export default {
     width: 100%;
   }
   .function-list-bg {
-    background-image: url("../assets/images/production-list-bg.jpg");
+    background-image: url("../../public/images/production-list-bg.jpg");
     background-size: 100%;
     background-color: #edeeef;
     /*height: 540px;*/

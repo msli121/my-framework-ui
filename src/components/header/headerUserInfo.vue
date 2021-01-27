@@ -43,7 +43,6 @@
 </template>
 
 <script>
-// import { logout } from "../../base/api.js"
 import {logout} from "../../base/api";
 
 export default {
@@ -52,7 +51,7 @@ export default {
     return {};
   },
   mounted() {
-    console.log("mounted", this.$store.state.userProfile);
+    console.log("headerUserInfo mounted", this.$store.state.userProfile);
   },
   computed: {
     loginSuccess() {

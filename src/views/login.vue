@@ -102,7 +102,8 @@
 </template>
 
 <script>
-  import {login, registry} from "../base/api"
+
+import {login, registry} from "../base/api"
 import wxLogin from 'vue-wxlogin'
 
 export default {
@@ -216,7 +217,7 @@ export default {
 .body-container {
   min-width: 980px;
   height: 100%;
-  background: url('../assets/images/login-bg.png') 20px 20px no-repeat;
+  background: url('../../public/images/login-bg.png') 20px 20px no-repeat;
   margin: 0 auto;
 }
 .main-container {

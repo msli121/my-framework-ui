@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-carousel height="400px" :interval="300000">
-      <el-carousel-item v-for="image in images" :key="image.url">
+      <el-carousel-item v-for="(image, index) in homeBgImages" :key="index">
         <el-image
           style="height: 400px"
           :src="image.url"
@@ -16,7 +16,7 @@
           <div class="production-list-body">
             <div
               class="production-item-container"
-              v-for="production in productionList"
+              v-for="production in homeProductionList"
               :key="production.url"
             >
               <el-image
@@ -44,40 +44,18 @@
 </template>
 
 <script>
+
+import { baseMixin }  from "../base/baseMixin";
 export default {
   name: "homePage",
+  mixins: [baseMixin],
   data() {
     return {
-      images: [
-        { fitType: "none", url: "/images/ocr1.jpg" },
-        { fitType: "none", url: "/images/ocr2.jpg" },
-        { fitType: "none", url: "/images/ocr3.jpg" },
-        { fitType: "none", url: "/images/ocr4.jpg" },
-      ],
-      productionList: [
-        {
-          fitType: "fill",
-          url: "/images/productionShow1.png",
-          title: "增值税发票识别",
-          pathOrUrl: "",
-          description: "能有效识别增值税普票、电子发票的关键字段",
-        },
-        {
-          fitType: "fill",
-          url: "/images/productionShow2.jpg",
-          title: "通用图片文字识别",
-          pathOrUrl: "",
-          description: "提供高精度、高可靠的图片文字检测和识别",
-        },
-        {
-          fitType: "fill",
-          url: "/images/productionShow3.png",
-          title: "特定场景服务定制",
-          pathOrUrl: "",
-          description: "针对特定需求场景，支持特定的OCR服务",
-        },
-      ],
-    };
+    }
+  },
+  mounted() {
+    console.log("homePageMounted");
+    console.log("homePage", this.homeBgImages, this.homeProductionList)
   },
   methods: {
     handleProductionClick(production) {
@@ -102,7 +80,7 @@ export default {
 }
 
 .production-list-bg {
-  background-image: url("../assets/images/production-list-bg.jpg");
+  background-image: url("../../public/images/production-list-bg.jpg");
   background-size: 100%;
   background-color: #edeeef;
   height: 540px;
