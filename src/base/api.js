@@ -16,6 +16,10 @@ export function logout() {
 export function checkAuthentication() {
   return get("/authentication");
 }
+// 通过微信扫码验证/注册用户
+export function loginByWechat(params) {
+  return post("/login/we-chat", params);
+}
 /**
  * Admin Menu API
  */
