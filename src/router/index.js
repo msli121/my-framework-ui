@@ -29,6 +29,11 @@ const routes = [
   },
 
   {
+    path: '/index',
+    redirect: '/home/page'
+  },
+
+  {
     path: '/home',
     name: 'home',
     component: home,

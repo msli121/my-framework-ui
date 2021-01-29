@@ -114,7 +114,7 @@ export default {
     return {
       loginShow: true,
       loginType: "password",
-      appId: "wxd6b5f4ad7aabf59a",
+      appId: "wx025e1cdaf3c78faf",
       redirect_uri: "localhost:8080/home/page",
       loading: false,
       loginForm: {
@@ -217,7 +217,7 @@ export default {
 .body-container {
   min-width: 980px;
   height: 100%;
-  background: url('../../public/images/login-bg.png') 20px 20px no-repeat;
+  background: url('../assets/images/login-bg.png') 20px 20px no-repeat;
   margin: 0 auto;
 }
 .main-container {

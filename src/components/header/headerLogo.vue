@@ -1,9 +1,11 @@
 <template>
   <div class="header-logo-container">
     <img
-      src="@/assets/icons/logo.png"
+      src="@/assets/icons/logo.jpg"
+      height="40"
+      width="40"
       @click="$router.push({ path: '/home/page' })"
-      style="cursor: pointer"
+      style="cursor: pointer;width: 36px; height: 36px;"
       alt="errorIcon"
       slot="reference"
     />

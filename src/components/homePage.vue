@@ -49,7 +49,7 @@ import { baseMixin }  from "../base/baseMixin";
 export default {
   name: "homePage",
   mixins: [baseMixin],
-  data() {
+  data: function () {
     return {
     }
   },
@@ -80,7 +80,7 @@ export default {
 }
 
 .production-list-bg {
-  background-image: url("../../public/images/production-list-bg.jpg");
+  background-image: url("../assets/images/production-list-bg.jpg");
   background-size: 100%;
   background-color: #edeeef;
   height: 540px;
