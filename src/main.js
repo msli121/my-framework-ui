@@ -26,14 +26,14 @@ router.beforeEach((to, from, next) => {
     initAdminMenu(router, store);
   }
 
-  // 如果前端没有登录信息则直接拦截，如果有则判断后端是否正常登录（防止构造参数绕过）
+  // 如果路由需要认证，则通过后端认证用户
   if (to.meta.requireAuth) {
     if (store.state.username) {
       checkAuthentication().then(res => {
         if (res.flag === 'T') {
           next()
         } else {
-          Vue.prototype.$message.error("验证失败，请重新登录");
+          Vue.prototype.$message.error("身份认证失败，请重新登录");
           next({
             path: '/login',
             query: { redirect: to.fullPath }

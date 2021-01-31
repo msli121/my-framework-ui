@@ -5,8 +5,8 @@ export function login(username, password) {
   return post("/login", {username, password});
 }
 // 注册
-export function registry(username, password) {
-  return post("/registry", {username, password});
+export function registry(data) {
+  return post("/registry", data);
 }
 // 退出登录
 export function logout() {

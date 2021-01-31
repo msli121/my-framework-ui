@@ -34,7 +34,7 @@
           <el-dropdown-item icon="el-icon-user-solid" command="user_center">个人中心</el-dropdown-item>
           <el-dropdown-item icon="el-icon-tickets" command="buy_record">购买记录</el-dropdown-item>
           <el-dropdown-item icon="el-icon-medal" command="vip_center">会员中心</el-dropdown-item>
-          <el-dropdown-item icon="el-icon-switch-button" command="adminConfig">管理中心</el-dropdown-item>
+          <el-dropdown-item v-if="userProfile.username === 'admin'" icon="el-icon-s-tools" command="adminConfig">后台管理</el-dropdown-item>
           <el-dropdown-item icon="el-icon-switch-button" command="logout">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -58,17 +58,19 @@ export default {
       return this.$store.state.loginSuccess;
     },
     userProfile() {
-      return {
-        fit: "fill",
-        username: this.$store.state.userProfile.username,
-        url: "/profile/" + this.$store.state.userProfile.sysHeadIcon,
-      };
-    },
-    userHeadIconUrl() {
-      console.log(
-        "@/assets/profile/" + this.$store.state.userProfile.sysHeadIcon
-      );
-      return "@/assets/profile/" + this.$store.state.userProfile.sysHeadIcon;
+      if(this.$store.state.userProfile.userType === 'weChat') {
+        return {
+          fit: "fill",
+          username: this.$store.state.userProfile.username,
+          url: this.$store.state.userProfile.headImgUrl,
+        };
+      } else {
+        return {
+          fit: "fill",
+          username: this.$store.state.userProfile.username,
+          url: require("@/assets/profile/" + this.$store.state.userProfile.sysHeadIcon) ,
+        };
+      }
     },
   },
   methods: {

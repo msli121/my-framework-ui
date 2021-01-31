@@ -13,8 +13,9 @@
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" label="id" sortable width="100"></el-table-column>
         <el-table-column prop="username" label="用户名" fit></el-table-column>
-        <el-table-column prop="phone" label="手机号" fit></el-table-column>
+        <el-table-column prop="phone" label="手机号" show-overflow-tooltip fit></el-table-column>
         <el-table-column prop="email" label="邮箱" show-overflow-tooltip fit></el-table-column>
+        <el-table-column prop="userType" label="用户类别" fit></el-table-column>
         <el-table-column label="状态" sortable width="100">
           <template slot-scope="scope">
             <el-switch
