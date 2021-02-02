@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production' ? '/ocr/' : '/',
+  // publicPath: process.env.NODE_ENV === 'production' ? '/ocr/' : '/',
   outputDir: 'dist',
   assetsDir: 'static',
   devServer: {
