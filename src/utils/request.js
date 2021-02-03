@@ -1,9 +1,11 @@
 import axios from "axios";
 import Qs from 'qs';
+import apiBaseUrl from "../base/baseUrl";
+
 
 const instance = axios.create({
   timeout: 8000, // 请求超时时间
-  baseURL: "http://localhost:8888/api", // api 的 base_url,
+  baseURL: apiBaseUrl, // api 的 base_url,
   withCredentials: true, // 允许跨域使用 cookie
 });
 instance.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';

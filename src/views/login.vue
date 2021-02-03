@@ -145,7 +145,7 @@ export default {
       scope: "snsapi_login",
       code:"",
       state: "271828",
-      redirect_uri: encodeURI("https://www.performercn.com/ocr/login"),
+      redirect_uri: encodeURI("https://www.performercn.com/login"),
       // 账号密码登录参数
       loginForm: {
         username: "admin",
@@ -172,7 +172,7 @@ export default {
   mounted() {
 
     if(this.$route.query.redirect) {
-      let url = "https://www.performercn.com/ocr/login?redirect=" + this.$route.query.redirect;
+      let url = "https://www.performercn.com/login?redirect=" + this.$route.query.redirect;
       this.redirect_uri = encodeURI(url);
     }
 

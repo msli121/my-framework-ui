@@ -6,7 +6,7 @@ export const baseMixin = {
         limit: 10,
         offset: 1
       },
-      // // 首页背景图
+      // 首页背景图
       homeBgImages: [
         { fitType: "none", url: require("@/assets/images/ocr1.jpg") },
         { fitType: "none", url: require("@/assets/images/ocr2.jpg") },
