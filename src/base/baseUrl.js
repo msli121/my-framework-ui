@@ -6,7 +6,7 @@ switch (process.env.NODE_ENV) { //注意变量名是自定义的
       break;
     case 'production':
       // 生产环境url
-      apiBaseUrl = "http://47.117.127.63:8888/api";
+      apiBaseUrl = "https://www.performercn.com/api";
       break;
 }
 export default apiBaseUrl;
