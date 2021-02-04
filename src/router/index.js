@@ -6,7 +6,6 @@ import home from '@/views/home.vue'
 import homePage from '@/components/homePage.vue'
 import adminIndex from "@/components/admin/adminIndex"
 import login from "@/views/login"
-import registry from  "@/views/registry.vue"
 
 Vue.use(VueRouter)
 
@@ -65,12 +64,6 @@ const routes = [
     path: '/login',
     name: 'login',
     component: login
-  },
-
-  {
-    path: '/registry',
-    name: 'registry',
-    component: registry
   },
 
   {

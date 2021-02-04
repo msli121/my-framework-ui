@@ -23,14 +23,14 @@ export default {
   width: 580px;
   height: 234px;
   margin: 50px auto 0 auto;
-  background-image: url(/images/404head.png)
+  background-image: url("../assets/images/404head.png");
 }
 
 .txtbg404 {
   width: 499px;
   height: 169px;
   margin: 10px auto 0 auto;
-  background-image: url(/images/404txtbg.png)
+  background-image: url("../assets/images/404txtbg.png");
 }
 
 .txtbg404 .txtbox {

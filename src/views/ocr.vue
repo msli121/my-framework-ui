@@ -34,8 +34,8 @@
                 :show-file-list="true"
                 :on-remove="handleRemove"
                 :on-change="fileChange">
-              <el-image v-if="imageUrl" style="width: 100%; height: 100%"
-                  :src="imageUrl" fit="scaleDown"></el-image>
+              <el-image v-if="imageUrl" style="display: block; width: 100%; height: 100%"
+                  :src="imageUrl" fit="fill"></el-image>
               <div v-else class="icon-container">
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
