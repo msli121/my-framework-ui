@@ -25,7 +25,7 @@
         <h2>功能演示</h2>
         <div class="show-container">
           <h3>上传图片</h3>
-          <el-upload style="margin-left: 20px;"
+          <el-upload
             action="#"
             with-credentials
             :multiple="multiple"
@@ -55,6 +55,20 @@
           <el-dialog :visible.sync="dialogVisible">
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
+          <h3>识别效果</h3>
+          <div style="display: flex; justify-content: space-between">
+            <div style="width: 60%; border: 1px solid #ebebeb;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
+              <div class="ocr-image-show" style=" height: 400px; overflow-y: auto; overflow-x: auto">
+                <el-image :src="selectedImageSrc" style="display: block;" fit="container"></el-image>
+              </div>
+            </div>
+            <div class="ocr-result-show" style=" width:35%;border: 1px solid #ebebeb;border-radius: 3px;padding: 8px 0px 8px 8px;">
+              <div class="show-result" v-loading="showLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+                <span style="display: inline-block; width: 100%;" v-for="(item, index) in testData" :key="index">[{{index + 1}}] {{item.text}}</span>
+              </div>
+            </div>
+          </div>
+
 <!--          <div class="upload-file">-->
 <!--            <el-upload-->
 <!--                drag-->
@@ -88,6 +102,8 @@
   import Icon from 'vue-svg-icon/Icon'
   import { baseMixin }  from "../base/baseMixin";
   import {uploadSinglePicture} from "../base/api";
+  import testData from "../base/test.js"
+
 export default {
   name: "ocr",
   components: {Icon},
@@ -102,7 +118,9 @@ export default {
       disabled: false,
       dialogImageUrl: '',
       limit: 5,
-      fileList: []
+      fileList: [],
+      selectedImageSrc: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+      testData: testData
     }
   },
   methods: {
@@ -191,72 +209,78 @@ export default {
       });
       console.log("handleRemove", file, this.fileList);
     },
+
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
       console.log("handlePictureCardPreview", file, this.fileList);
     },
+
     handleFileOcr(file) {
+      this.selectedImageSrc = file.url;
       console.log("handleFileOcr", file, this.fileList);
     },
+
     handleExceed(files, fileList) {
       // this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
       console.log(files.length, fileList.length);
       this.$message.warning(`文件个数超出限制，最多暂存 ${this.limit} 个文件`);
     },
+
     handlePictureChange(file, fileList) {
       console.log("handlePictureChange", file, fileList);
       this.fileList = fileList;
-      // let that = this;
-      // const isLt2M = file.size / 1024 / 1024 < 2;
-      // const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
-      // if(isLt2M && isAllowedType) {
-      //   this.transferImag2Base64(file.raw).then(res => {
-      //     let base64 = res.split(",");
-      //     console.log("base64 result ", base64);
-      //     let requestBody = {
-      //       fileName: file.name,
-      //       fileSize: file.size,
-      //       fileType: file.raw.type,
-      //       fileData: base64[1]
-      //     };
-      //     that.showLoading = true;
-      //     that.imageUrl = res;
-      //     uploadSinglePicture(requestBody).then(data => {
-      //       if(data.flag === "T") {
-      //         console.log("上传成功！！！！", data);
-      //       } else {
-      //         that.$message.error(data.msg);
-      //       }
-      //       that.showLoading = false;
-      //     }).catch( error => {
-      //       that.fileList.forEach((item, index, arr) => {
-      //         if(item.uid === file.uid) {
-      //           arr.splice(index, 1);
-      //         }
-      //       });
-      //       that.showLoading = false;
-      //       that.$message.error("上传失败，请重试");
-      //       console.log(error);
-      //     })
-      //   }).catch(e => {
-      //     that.fileList.forEach((item, index, arr) => {
-      //       if(item.uid === file.uid) {
-      //         arr.splice(index, 1);
-      //       }
-      //     });
-      //     that.showLoading = false;
-      //     that.$message.error("上传失败，请重试");
-      //     console.log(e);
-      //   })
-      // } else {
-      //   that.fileList.forEach((item, index, arr) => {
-      //     if(item.uid === file.uid) {
-      //       arr.splice(index, 1);
-      //     }
-      //   });
-      //   this.$message.error('请选择正确格式图片，大小不能超过 2MB')
-      // }
+      this.selectedImageSrc = file.url;
+      let that = this;
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
+      if(isLt2M && isAllowedType) {
+        this.transferImag2Base64(file.raw).then(res => {
+          let base64 = res.split(",");
+          console.log("base64 result ", base64);
+          let requestBody = {
+            fileName: file.name,
+            fileSize: file.size,
+            fileType: file.raw.type,
+            fileData: base64[1]
+          };
+          that.showLoading = true;
+          that.imageUrl = res;
+          uploadSinglePicture(requestBody).then(data => {
+            if(data.flag === "T") {
+              console.log("上传成功！！！！", data);
+            } else {
+              that.$message.error(data.msg);
+            }
+            that.showLoading = false;
+          }).catch( error => {
+            that.fileList.forEach((item, index, arr) => {
+              if(item.uid === file.uid) {
+                arr.splice(index, 1);
+              }
+            });
+            that.showLoading = false;
+            that.$message.error("上传失败，请重试");
+            console.log(error);
+          })
+        }).catch(e => {
+          that.fileList.forEach((item, index, arr) => {
+            if(item.uid === file.uid) {
+              arr.splice(index, 1);
+            }
+          });
+          that.showLoading = false;
+          that.$message.error("上传失败，请重试");
+          console.log(e);
+        })
+      } else {
+        that.fileList.forEach((item, index, arr) => {
+          if(item.uid === file.uid) {
+            arr.splice(index, 1);
+          }
+        });
+        this.$message.error('请选择正确格式图片，大小不能超过 2MB')
+      }
     },
 
 
@@ -318,11 +342,11 @@ export default {
   }
 
   .function-container {
-    width: 1200px;
+    width: 1300px;
     margin: 0 auto;
   }
 
-   h2 {
+  .function-container > h2 {
     font-size: 28px;
     color: #333333;
     text-align: center;
@@ -348,6 +372,7 @@ export default {
   }
 
   .function-item-content > h3 {
+    display: inline-block;
     height: 64px;
     line-height: 64px;
     margin: 0;
@@ -362,30 +387,39 @@ export default {
   }
 
   .demo-show-container {
-    width: 1200px;
+    width: 1300px;
     margin: 0 auto;
-    min-height: 700px;
+    min-height: 900px;
+  }
+
+  .demo-show-container > h2 {
+    font-size: 28px;
+    color: #333333;
+    text-align: center;
+    font-weight: bold;
+    line-height: 1.5;
   }
 
   .show-container {
-    width: 100%;
+    width: 1260px;
     min-height: 600px;
     text-align: left;
+    padding: 0px 20px 20px 20px;
     //display: flex;
     //flex-flow: nowrap;
     //justify-content: space-between;
     //align-items: center;
 
-    //border: 1px dashed #f68084;
+    border: 1px dashed #f68084;
     //padding: 0 20px 0px 20px;
-    border: 1px dashed #d9d9d9;
+    //border: 1px dashed #d9d9d9;
     //border-radius: 6px;
     border-radius: 6px;
   }
 
   .show-container > h3 {
-    font-weight: 400;
-    color: #1f2f3d;
+    //font-weight: 400;
+    //color: #1f2f3d;
     height: 64px;
     line-height: 64px;
     text-align: center;
@@ -414,12 +448,14 @@ export default {
   }
 
   .show-result {
+    //height: 400px;
+    //width: 580px;
+    //border: 1px dashed #d9d9d9;
+    //border-radius: 6px;
+    //box-sizing: border-box;
+    //overflow: auto;
     height: 400px;
-    width: 580px;
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    box-sizing: border-box;
-    overflow: auto;
+    overflow-y: auto;
   }
 
 </style>
