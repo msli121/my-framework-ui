@@ -64,34 +64,10 @@
             </div>
             <div class="ocr-result-show" style=" width:35%;border: 1px solid #ebebeb;border-radius: 3px;padding: 8px 0px 8px 8px;">
               <div class="show-result" v-loading="showLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-                <span style="display: inline-block; width: 100%;" v-for="(item, index) in testData" :key="index">[{{index + 1}}] {{item.text}}</span>
+                <span style="display: inline-block; width: 100%;" v-for="(item, index) in selectedOcrResult" :key="index">[{{index + 1}}] {{item.text}}</span>
               </div>
             </div>
           </div>
-
-<!--          <div class="upload-file">-->
-<!--            <el-upload-->
-<!--                drag-->
-<!--                :limit="2"-->
-<!--                accept="image/jpg,image/png,image/jpeg"-->
-<!--                action=""-->
-<!--                :auto-upload="false"-->
-<!--                :show-file-list="true"-->
-<!--                :on-remove="handleRemove"-->
-<!--                :on-change="fileChange">-->
-<!--              <el-image v-if="imageUrl" style="display: block; width: 100%; height: 100%"-->
-<!--                  :src="imageUrl" fit="none"></el-image>-->
-<!--              <div v-else class="icon-container">-->
-<!--                <i class="el-icon-upload"></i>-->
-<!--                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>-->
-<!--                <div class="el-upload__tip" slot="tip">只能上传jpg/png/jpeg文件，且不超过2MB</div>-->
-<!--              </div>-->
-<!--            </el-upload>-->
-<!--          </div>-->
-
-<!--          <div class="show-result"  v-loading="showLoading"-->
-<!--               element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">-->
-<!--          </div>-->
         </div>
       </div>
     </div>
@@ -102,7 +78,7 @@
   import Icon from 'vue-svg-icon/Icon'
   import { baseMixin }  from "../base/baseMixin";
   import {uploadSinglePicture} from "../base/api";
-  import testData from "../base/test.js"
+  // import testData from "../base/test.js"
 
 export default {
   name: "ocr",
@@ -119,69 +95,12 @@ export default {
       dialogImageUrl: '',
       limit: 5,
       fileList: [],
+      ocrResultList: [],
       selectedImageSrc: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-      testData: testData
+      selectedOcrResult: []
     }
   },
   methods: {
-    fileChange(file, fileList) {
-      console.log("fileChange", file);
-      let that = this;
-      if(fileList.length >= 2) {
-        // 数组清空
-        fileList.splice(0, fileList.length);
-        console.log("数组已经清空");
-        fileList.push(file);
-        console.log("已经添加file", file);
-      }
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
-      if(isLt2M && isAllowedType) {
-        this.transferImag2Base64(file.raw).then(res => {
-          let base64 = res.split(",");
-          console.log("base64 result ", base64);
-          let requestBody = {
-            fileName: file.name,
-            fileSize: file.size,
-            fileType: file.raw.type,
-            fileData: base64[1]
-          };
-          that.showLoading = true;
-          that.imageUrl = res;
-          uploadSinglePicture(requestBody).then(data => {
-            if(data.flag === "T") {
-              console.log("上传成功！！！！", data);
-            } else {
-              that.$message.error(data.msg);
-            }
-            that.showLoading = false;
-          }).catch( error => {
-            // 数组清空
-            fileList.splice(0, fileList.length);
-            // 图片清空
-            that.imageUrl = "";
-            that.showLoading = false;
-            that.$message.error("上传失败，请重试");
-            console.log(error);
-          })
-        }).catch(e => {
-          // 数组清空
-          fileList.splice(0, fileList.length);
-          // 图片清空
-          that.imageUrl = "";
-          that.showLoading = false;
-          this.$message.error("上传失败，请重试");
-          console.log(e);
-        })
-      } else {
-        // 数组清空
-        fileList.splice(0, fileList.length);
-        // 图片清空
-        that.imageUrl = "";
-        this.$message.error('请选择正确格式图片，大小不能超过 2MB')
-      }
-
-    },
 
     transferImag2Base64(file) {
       return new Promise((resolve, reject) => {
@@ -194,35 +113,33 @@ export default {
       })
     },
 
-    // handleRemove(file, fileList) {
-    //   // 数组清空
-    //   fileList.splice(0, fileList.length);
-    //   // 图片清空
-    //   this.imageUrl = "";
-    // },
-
     handleRemove(file) {
+      let that = this;
       this.fileList.forEach((item, index, arr) => {
         if(item.uid === file.uid) {
           arr.splice(index, 1);
+          that.ocrResultList.splice(index, 1);
         }
       });
-      console.log("handleRemove", file, this.fileList);
     },
 
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
-      console.log("handlePictureCardPreview", file, this.fileList);
     },
 
     handleFileOcr(file) {
       this.selectedImageSrc = file.url;
-      console.log("handleFileOcr", file, this.fileList);
+      let that = this;
+      this.fileList.forEach((item, index, arr) => {
+        if(item.uid === file.uid) {
+          console.log("item", item,  index, arr, that.ocrResultList);
+          that.selectedOcrResult = that.ocrResultList[index];
+        }
+      });
     },
 
     handleExceed(files, fileList) {
-      // this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
       console.log(files.length, fileList.length);
       this.$message.warning(`文件个数超出限制，最多暂存 ${this.limit} 个文件`);
     },
@@ -246,14 +163,21 @@ export default {
           };
           that.showLoading = true;
           that.imageUrl = res;
-          uploadSinglePicture(requestBody).then(data => {
-            if(data.flag === "T") {
-              console.log("上传成功！！！！", data);
+          uploadSinglePicture(requestBody).then(res => {
+            if(res.flag === "T") {
+              that.$message.success("上传成功");
+              that.selectedOcrResult = res.data;
+              that.ocrResultList.push(res.data);
             } else {
-              that.$message.error(data.msg);
+              that.fileList.forEach((item, index, arr) => {
+                if(item.uid === file.uid) {
+                  arr.splice(index, 1);
+                }
+              });
+              that.$message.error(res.msg);
             }
             that.showLoading = false;
-          }).catch( error => {
+          }).catch(error => {
             that.fileList.forEach((item, index, arr) => {
               if(item.uid === file.uid) {
                 arr.splice(index, 1);
@@ -282,7 +206,6 @@ export default {
         this.$message.error('请选择正确格式图片，大小不能超过 2MB')
       }
     },
-
 
   }
 }
