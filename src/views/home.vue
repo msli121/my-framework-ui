@@ -42,12 +42,13 @@ export default {
 .header-container {
   height: 60px;
   width: 100%;
-  background: #fff;
+  /*background: #fff;*/
   position: fixed;
   display: flex;
   justify-content: center;
   top: 0;
   border-bottom: 1px solid #e6e6e6;
+  background: var(--gray-02,#f0f0f0);
   z-index: 5;
 }
 
