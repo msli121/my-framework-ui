@@ -1,11 +1,9 @@
 <template>
   <div class="header-logo-container">
     <img
-      src="@/assets/icons/logo.jpg"
-      height="40"
-      width="40"
+      src="@/assets/icons/logo.png"
       @click="$router.push({ path: '/home/page' })"
-      style="cursor: pointer;width: 36px; height: 36px;"
+      style="cursor: pointer;width: 200px; height: 50px;"
       alt="errorIcon"
       slot="reference"
     />
@@ -28,6 +26,6 @@ export default {
   align-items: center;
   height: 100%;
   width: 100%;
-  justify-content: center;
+  justify-content: left;
 }
 </style>

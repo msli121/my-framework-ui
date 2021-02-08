@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="header-container">
-      <div>
+      <div style="position: relative; width: 80%">
         <div class="header-logo-box">
           <header-logo></header-logo>
         </div>
@@ -43,15 +43,18 @@ export default {
   height: 60px;
   width: 100%;
   background: #fff;
-  position: fixed; 
+  position: fixed;
+  display: flex;
+  justify-content: center;
   top: 0;
+  border-bottom: 1px solid #e6e6e6;
   z-index: 5;
 }
 
 .header-logo-box {
   position: absolute;
   height: 60px;
-  left: 60px;
+  left: 0px;
   top: 0px;
   width: 200px;
   z-index: 10;
@@ -60,7 +63,7 @@ export default {
 .header-login-box {
   position: absolute;
   height: 60px;
-  right: 60px;
+  right: 0px;
   top: 0px;
   width: 200px;
   z-index: 2;
@@ -68,7 +71,7 @@ export default {
 
 .header-nav-box {
   height: 60px;
-  border-bottom: 1px solid #e6e6e6;
+  /*border-bottom: 1px solid #e6e6e6;*/
 }
 
 .header-nav-box a {
