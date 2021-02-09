@@ -48,7 +48,7 @@ export default {
     background: #333333;
   }
   .footer-center {
-    width: 1200px;
+    width: 1300px;
     margin: 0 auto;
     /*padding: 60px 0 58px;*/
     /*display: flex;*/

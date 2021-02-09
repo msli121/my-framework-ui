@@ -55,16 +55,45 @@
           <el-dialog :visible.sync="dialogVisible">
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
-          <h3>识别效果</h3>
-          <div style="display: flex; justify-content: space-between">
-            <div style="width: 60%; border: 1px solid #ebebeb;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
-              <div class="ocr-image-show" style=" height: 400px; overflow-y: auto; overflow-x: auto">
+          <h3>原图预览</h3>
+          <div style="display: flex; justify-content: center">
+            <div style="width: 80%; border: 1px solid #ebebeb;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
+              <div style=" height: 400px; overflow-y: auto; overflow-x: auto">
                 <el-image :src="selectedImageSrc" style="display: block;" fit="container"></el-image>
               </div>
             </div>
-            <div class="ocr-result-show" style=" width:35%;border: 1px solid #ebebeb;border-radius: 3px;padding: 8px 0px 8px 8px;">
-              <div class="show-result" v-loading="showLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-                <span style="display: inline-block; width: 100%;" v-for="(item, index) in selectedOcrResult" :key="index">[{{index + 1}}] {{item.text}}</span>
+<!--            <div class="ocr-result-show" style=" width:35%;border: 1px solid #ebebeb;border-radius: 3px;padding: 8px 0px 8px 8px;">-->
+<!--              <div class="show-result" v-loading="showLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">-->
+<!--                <span style="display: inline-block; width: 100%;" v-for="(item, index) in selectedOcrResult" :key="index">[{{index + 1}}] {{item.text}}</span>-->
+<!--              </div>-->
+<!--            </div>-->
+          </div>
+          <h3>识别效果</h3>
+          <div style="display: flex; justify-content: flex-end; width: 90%;">
+            <el-form label-width="90px">
+              <el-form-item label="识别可信度">
+                <el-select size="small" v-model="confidence" placeholder="请选择可信度">
+                  <el-option created label="可信度90%以上" value="0.9"></el-option>
+                  <el-option label="可信度80%以上" value="0.8"></el-option>
+                  <el-option label="可信度70%以上" value="0.7"></el-option>
+                  <el-option label="可信度60%以上" value="0.6"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </div>
+          <div style="display: flex; justify-content: center">
+            <div style="width: 80%;  border: 1px solid #ebebeb;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
+              <div style=" height: 400px; overflow-y: auto; overflow-x: auto; position: relative;"
+                   v-loading="showLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+                <el-input v-for="(item, index) in selectedOcrResult" :key="index"
+                    type="text"
+                    :style="'display: inline-block; ' + 'position: absolute; ' +
+                            'width:' + (item.text_region[1][0] - item.text_region[0][0] + 40) + 'px;' +
+                            'left:' + (item.text_region[0][0]) + 'px;' +
+                            'top:' + (item.text_region[0][1]) + 'px;' "
+                    size="mini"
+                    v-model="item.text">
+                </el-input>
               </div>
             </div>
           </div>
@@ -82,7 +111,7 @@
   import { baseMixin }  from "../base/baseMixin";
   import {uploadSinglePicture} from "../base/api";
   import pageFooter from "../components/footer/pageFooter";
-  // import testData from "../base/test.js";
+  import testData from "../base/test.js";
 
 export default {
   name: "ocr",
@@ -91,6 +120,7 @@ export default {
 
   data() {
     return {
+      confidence: 0.9,
       proofImage: "",
       showLoading: false,
       multiple: false,
@@ -101,7 +131,7 @@ export default {
       fileList: [],
       ocrResultList: [],
       selectedImageSrc: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-      selectedOcrResult: []
+      selectedOcrResult: testData
     }
   },
   methods: {
@@ -216,7 +246,10 @@ export default {
 </script>
 
 <style scoped lang="less">
-
+  /deep/ .el-input--mini .el-input__inner {
+    height: 24px;
+    line-height: 24px;
+  }
   .ocr-banner {
     box-sizing: border-box;
     position: relative;
@@ -258,6 +291,7 @@ export default {
   .body-container {
     background-color: #ffff;
     width: 100%;
+    margin-bottom: 40px;
   }
 
   .function-list-bg {
@@ -330,7 +364,7 @@ export default {
   .show-container {
     width: 1260px;
     min-height: 600px;
-    text-align: left;
+    text-align: center;
     padding: 0px 20px 20px 20px;
     //display: flex;
     //flex-flow: nowrap;
