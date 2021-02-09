@@ -71,6 +71,9 @@
         </div>
       </div>
     </div>
+    <div class="footer">
+      <page-footer></page-footer>
+    </div>
   </div>
 </template>
 
@@ -78,11 +81,12 @@
   import Icon from 'vue-svg-icon/Icon'
   import { baseMixin }  from "../base/baseMixin";
   import {uploadSinglePicture} from "../base/api";
-  // import testData from "../base/test.js"
+  import pageFooter from "../components/footer/pageFooter";
+  // import testData from "../base/test.js";
 
 export default {
   name: "ocr",
-  components: {Icon},
+  components: {Icon, pageFooter},
   mixins: [baseMixin],
 
   data() {
