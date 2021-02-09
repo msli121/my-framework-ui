@@ -39,7 +39,7 @@
       </div>
     </div>
     <div>
-
+      <page-footer></page-footer>
     </div>
   </div>
 </template>
@@ -47,10 +47,12 @@
 <script>
 
   import {baseMixin} from "../base/baseMixin";
+  import pageFooter from "./footer/pageFooter"
 
   export default {
     name: "homePage",
     mixins: [baseMixin],
+    components: {pageFooter},
     data: function () {
       return {}
     },

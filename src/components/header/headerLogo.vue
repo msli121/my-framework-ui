@@ -1,9 +1,9 @@
 <template>
   <div class="header-logo-container">
     <img
-      src="@/assets/icons/logo.png"
+      src="@/assets/icons/ocr-logo.png"
       @click="$router.push({ path: '/home/page' })"
-      style="cursor: pointer;width: 200px; height: 50px;"
+      style="cursor: pointer;"
       alt="errorIcon"
       slot="reference"
     />
