@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-carousel height="400px" :interval="300000">
+    <el-carousel height="400px" :interval="3000">
       <el-carousel-item v-for="(image, index) in homeBgImages" :key="index">
         <el-image
             style="height: 400px"
