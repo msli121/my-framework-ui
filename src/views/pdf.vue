@@ -2,8 +2,8 @@
   <div>
     <div class="ocr-banner">
       <div class="ocr-banner-content">
-        <div class="ocr-banner-title">通用OCR识别</div>
-        <div class="ocr-banner-info">针对多场景、多业务的通用ocr识别，基于深度学习技术，支持图片文字识别、pdf内容识别、发票内容识别等常见需求，还可返回文字的位置信息、字符内容等</div>
+        <div class="ocr-banner-title">PDF识别</div>
+        <div class="ocr-banner-info">针对多场景、多业务的PDF识别，基于深度学习技术，高精度识别PDF文件内容</div>
       </div>
     </div>
     <div class="body-container">
@@ -104,6 +104,7 @@
         selectedOcrResult: []
       }
     },
+
     methods: {
 
       transferImag2Base64(file) {
@@ -221,7 +222,7 @@
     box-sizing: border-box;
     position: relative;
     height: 450px;
-    background: url("https://ai.bdstatic.com/file/A319A3C404CD46C09DA38D9D42FD627C") no-repeat 50% 50%;
+    background: url("../assets/images/pdf-background.jpg") no-repeat 50% 50%;
     background-size: cover;
     overflow: hidden;
   }
