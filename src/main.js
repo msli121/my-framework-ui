@@ -7,11 +7,14 @@ import 'element-ui/lib/theme-chalk/index.css'
 import less from 'less'
 import { Message } from 'element-ui'
 import {checkAuthentication, getCurrentUserMenusWithTree} from "./base/api";
+import VueClipboard from 'vue-clipboard2';
+
 
 Vue.config.productionTip = false;
 
 Vue.use(ElementUI)
 Vue.use(less)
+Vue.use(VueClipboard)
 Vue.prototype.$message = Message;
 
 // 全局守卫路由

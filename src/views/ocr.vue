@@ -33,10 +33,11 @@
             :limit="limit"
             :on-exceed="handleExceed"
             list-type="picture-card"
+            :before-upload="handlePictureBeforeUpload"
             :on-change="handlePictureChange"
             :auto-upload="false">
             <i slot="default" class="el-icon-plus"></i>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过2MB</div>
+            <div slot="tip" class="el-upload__tip" style="font-weight: bold;">只能上传 jpg/jpeg/png 文件，且不超过 2MB</div>
             <div slot="file" slot-scope="{file}">
               <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
               <span class="el-upload-list__item-actions">
@@ -62,33 +63,33 @@
                 <el-image :src="selectedImageSrc" style="display: block;" fit="container"></el-image>
               </div>
             </div>
-<!--            <div class="ocr-result-show" style=" width:35%;border: 1px solid #ebebeb;border-radius: 3px;padding: 8px 0px 8px 8px;">-->
-<!--              <div class="show-result" v-loading="showLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">-->
-<!--                <span style="display: inline-block; width: 100%;" v-for="(item, index) in selectedOcrResult" :key="index">[{{index + 1}}] {{item.text}}</span>-->
-<!--              </div>-->
-<!--            </div>-->
           </div>
           <h3>识别效果</h3>
           <div style="display: flex; justify-content: flex-end; width: 90%;">
             <el-form label-width="90px">
-              <el-form-item label="识别可信度">
-                <el-select size="small" v-model="confidence" placeholder="请选择可信度">
-                  <el-option created label="可信度90%以上" value="0.9"></el-option>
-                  <el-option label="可信度80%以上" value="0.8"></el-option>
-                  <el-option label="可信度70%以上" value="0.7"></el-option>
-                  <el-option label="可信度60%以上" value="0.6"></el-option>
-                </el-select>
-              </el-form-item>
+                <el-form-item label="识别可信度">
+                  <el-col :span="22">
+                    <el-select size="small" v-model="confidence" @change="handleConfidenceChange" placeholder="请选择可信度">
+                      <el-option label="可信度100%以下" value="1.0"></el-option>
+                      <el-option label="可信度99%以下" value="0.99"></el-option>
+                      <el-option label="可信度94%以下" value="0.96"></el-option>
+                      <el-option label="可信度90%以下" value="0.9"></el-option>
+                      <el-option label="可信度80%以下" value="0.8"></el-option>
+                      <el-option label="可信度70%以下" value="0.7"></el-option>
+                    </el-select>
+                  </el-col>
+                </el-form-item>
             </el-form>
           </div>
-          <div style="display: flex; justify-content: center">
+          <div style="display: flex; justify-content: center;">
             <div style="width: 80%;  border: 1px solid #ebebeb;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
               <div style=" height: 400px; overflow-y: auto; overflow-x: auto; position: relative;"
                    v-loading="showLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
                 <el-input v-for="(item, index) in selectedOcrResult" :key="index"
                     type="text"
+                    :class="{'confidence-low': item.confidence < confidence }"
                     :style="'display: inline-block; ' + 'position: absolute; ' +
-                            'width:' + (item.text_region[1][0] - item.text_region[0][0] + 40) + 'px;' +
+                            'width: ' + (item.text_region[1][0] - item.text_region[0][0] + 40) + 'px;' +
                             'left:' + (item.text_region[0][0]) + 'px;' +
                             'top:' + (item.text_region[0][1]) + 'px;' "
                     size="mini"
@@ -96,6 +97,12 @@
                 </el-input>
               </div>
             </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; width: 90%; margin-top: 20px;">
+            <el-button type="text"
+                       style="margin-right: 20px;"
+                       @click="handleCopyOcrResult">复制识别文本</el-button>
+            <el-button type="success" @click="handleEditSave">修改保存</el-button>
           </div>
         </div>
       </div>
@@ -109,7 +116,7 @@
 <script>
   import Icon from 'vue-svg-icon/Icon'
   import { baseMixin }  from "../base/baseMixin";
-  import {uploadSinglePicture} from "../base/api";
+  import {editAndSaveOcrResult, uploadSinglePicture} from "../base/api";
   import pageFooter from "../components/footer/pageFooter";
   import testData from "../base/test.js";
 
@@ -120,19 +127,27 @@ export default {
 
   data() {
     return {
-      confidence: 0.9,
+      confidence: 0.99,
       proofImage: "",
       showLoading: false,
       multiple: false,
       dialogVisible: false,
       disabled: false,
+      login: false,
       dialogImageUrl: '',
       limit: 5,
       fileList: [],
       ocrResultList: [],
       selectedImageSrc: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-      selectedOcrResult: testData
+      selectedOcrResult: testData,
     }
+  },
+  computed: {
+
+    loginSuccess() {
+      return this.$store.state.loginSuccess;
+    }
+
   },
   methods: {
 
@@ -176,6 +191,14 @@ export default {
     handleExceed(files, fileList) {
       console.log(files.length, fileList.length);
       this.$message.warning(`文件个数超出限制，最多暂存 ${this.limit} 个文件`);
+    },
+
+    handleConfidenceChange(value) {
+      console.log("value: ", value, this.confidence);
+    },
+
+    handlePictureBeforeUpload(file) {
+      console.log("file", file)
     },
 
     handlePictureChange(file, fileList) {
@@ -239,6 +262,49 @@ export default {
         });
         this.$message.error('请选择正确格式图片，大小不能超过 2MB')
       }
+    },
+
+    handleCopyOcrResult() {
+      if(!this.loginSuccess) {
+        this.$message.error("请先登录")
+      } else {
+        let that = this;
+        let copyText = "";
+        for(let i=1; i <= this.selectedOcrResult.length; i++) {
+          copyText = copyText + "[" + i + "]" + this.selectedOcrResult[i-1].text + "\n";
+        }
+        this.$copyText(copyText).then(
+            function (e) {
+              console.log("copyText", copyText, e);
+              that.$message.success("复制成功");
+            },
+            function (e) {
+              console.log("copyText", copyText, e);
+              that.$message.success("复制失败");
+            }
+        );
+      }
+    },
+
+    handleEditSave() {
+      if(!this.loginSuccess) {
+        this.$message.error("请先登录");
+      } else {
+        let requestBody = {
+          ocrResult: []
+        }
+        editAndSaveOcrResult(requestBody).then(res => {
+          console.log("res", res)
+        })
+      }
+    },
+
+    onCopySuccess() {
+      this.$message.success('复制成功');
+    },
+
+    onCopyError() {
+      this.$message.error('复制失败');
     },
 
   }
@@ -320,6 +386,10 @@ export default {
     display: flex;
     margin: 60px auto 0;
     justify-content: space-between;
+  }
+
+  .confidence-low {
+    border: 1px solid red;
   }
 
   .function-item-container {

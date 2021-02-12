@@ -99,9 +99,13 @@ export function updatePermissionStatus(data) {
 }
 
 /**
- * 业务 API
+ * 业务 OCR API
  */
 // 上传单张照片
 export function uploadSinglePicture(data) {
   return post("/ocr/single", data)
+}
+// 识别结果，编辑保存
+export function editAndSaveOcrResult(data) {
+  return post("/ocr/edit-save", data)
 }
