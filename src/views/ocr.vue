@@ -138,7 +138,8 @@ export default {
       limit: 5,
       fileList: [],
       ocrResultList: [],
-      selectedImageSrc: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+      // selectedImageSrc: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+      selectedImageSrc: require("../assets/data/fapiao_demo.png"),
       selectedOcrResult: testData,
     }
   },
