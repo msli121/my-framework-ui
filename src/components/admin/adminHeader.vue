@@ -1,6 +1,6 @@
 <template>
   <div class="header-container">
-    <div>
+    <div style="position: relative; width: 80%">
       <div class="header-logo-box">
         <header-logo></header-logo>
       </div>
@@ -28,15 +28,18 @@ export default {
   width: 100%;
   background: #fff;
   position: relative;
+  display: flex;
+  justify-content: center;
   top: 0;
   border-bottom: 2px solid #e6e6e6;
+  background: var(--gray-02,#f0f0f0);
   z-index: 2;
 }
 
 .header-logo-box {
   position: absolute;
   height: 60px;
-  left: 60px;
+  //left: 60px;
   top: 0px;
   width: 200px;
   z-index: 3;
@@ -45,7 +48,7 @@ export default {
 .header-login-box {
   position: absolute;
   height: 60px;
-  right: 60px;
+  right: 0px;
   top: 0px;
   width: 200px;
   z-index: 3;

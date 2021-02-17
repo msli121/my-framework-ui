@@ -58,7 +58,7 @@
           </el-dialog>
           <h3>原图预览</h3>
           <div style="display: flex; justify-content: center">
-            <div style="width: 80%; border: 1px solid #ebebeb;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
+            <div style="width: 80%; border: 1px dashed #f68084;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
               <div style=" height: 400px; overflow-y: auto; overflow-x: auto">
                 <el-image :src="selectedImageSrc" style="display: block;" fit="container"></el-image>
               </div>
@@ -82,7 +82,7 @@
             </el-form>
           </div>
           <div style="display: flex; justify-content: center;">
-            <div style="width: 80%;  border: 1px solid #ebebeb;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
+            <div style="width: 80%;  border: 1px dashed #f68084;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
               <div style=" height: 400px; overflow-y: auto; overflow-x: auto; position: relative;"
                    v-loading="showLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
                 <el-input v-for="(item, index) in selectedOcrResult" :key="index"
@@ -442,7 +442,8 @@ export default {
     //justify-content: space-between;
     //align-items: center;
 
-    border: 1px dashed #f68084;
+    //border: 1px dashed #f68084;
+    border: 1px solid #ebebeb;
     //padding: 0 20px 0px 20px;
     //border: 1px dashed #d9d9d9;
     //border-radius: 6px;

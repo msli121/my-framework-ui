@@ -32,8 +32,8 @@
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item icon="el-icon-user-solid" command="user_center">个人中心</el-dropdown-item>
-          <el-dropdown-item icon="el-icon-tickets" command="buy_record">购买记录</el-dropdown-item>
-          <el-dropdown-item icon="el-icon-medal" command="vip_center">会员中心</el-dropdown-item>
+<!--          <el-dropdown-item icon="el-icon-tickets" command="buy_record">购买记录</el-dropdown-item>-->
+<!--          <el-dropdown-item icon="el-icon-medal" command="vip_center">会员中心</el-dropdown-item>-->
           <el-dropdown-item v-if="userProfile.username === 'admin'" icon="el-icon-s-tools" command="adminConfig">后台管理</el-dropdown-item>
           <el-dropdown-item icon="el-icon-switch-button" command="logout">退出登录</el-dropdown-item>
         </el-dropdown-menu>
