@@ -6,6 +6,7 @@ import home from '@/views/home.vue'
 import homePage from '@/components/homePage.vue'
 import adminIndex from "@/components/admin/adminIndex"
 import login from "@/views/login"
+import account from "@/views/account"
 
 Vue.use(VueRouter)
 
@@ -64,6 +65,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: login
+  },
+  {
+    path: '/account',
+    name: 'account',
+    component: account
   },
 
   {
