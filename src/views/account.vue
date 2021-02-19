@@ -32,21 +32,21 @@
           </div>
           <div class="user_center_box">
             <h5>个人中心</h5>
-            <el-menu class="el-menu-vertical-demo" :collapse="false" style="text-align: left;"
-                     active-text-color="#00cdac">
-              <el-menu-item index="1">
+            <el-menu class="el-menu-vertical-demo" :collapse="false" style="text-align: left;border-right:none;"
+                     active-text-color="#00cdac" default-active="person-info">
+              <el-menu-item index="person-info">
                 <i class="el-icon-user"></i>
                 <span slot="title">我的信息</span>
               </el-menu-item>
-              <el-menu-item index="2">
+              <el-menu-item index="vip">
                 <i class="el-icon-medal"></i>
                 <span slot="title">开通会员</span>
               </el-menu-item>
-              <el-menu-item index="3">
+              <el-menu-item index="upload">
                 <i class="el-icon-upload"></i>
                 <span slot="title">上传记录</span>
               </el-menu-item>
-              <el-menu-item index="4">
+              <el-menu-item index="buy-record">
                 <i class="el-icon-s-order"></i>
                 <span slot="title">购买记录</span>
               </el-menu-item>
