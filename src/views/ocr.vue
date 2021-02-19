@@ -490,5 +490,11 @@ export default {
     height: 400px;
     overflow-y: auto;
   }
+  /deep/.el-input__inner:focus {
+    border-color: #409eff;
+    outline: 0;
+    position: relative;
+    z-index: 10;
+  }
 
 </style>

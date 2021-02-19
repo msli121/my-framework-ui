@@ -1,6 +1,6 @@
 <template>
   <div class="header-container">
-    <div style="position: relative; width: 80%">
+    <div style="position: relative; width: 1200px;">
       <div class="header-logo-box">
         <header-logo></header-logo>
       </div>

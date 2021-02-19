@@ -46,7 +46,9 @@ export default {
 
 <style scoped>
 .footer {
-  background: #333333;
+  background: #485563;
+  /*background: linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.15) 100%), radial-gradient(at top center, rgba(255,255,255,0.40) 0%, rgba(0,0,0,0.40) 120%) #989898;*/
+  /*background-blend-mode: multiply,multiply;*/
 }
 
 .footer-center {
@@ -62,7 +64,8 @@ export default {
   overflow: hidden;
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid #666666;
+  /*border-bottom: 1px solid #666666;*/
+  border-bottom: 1px solid #d7d2cc;
 }
 
 .footer-top > div {
@@ -81,7 +84,7 @@ export default {
 
 .about-us {
   width: 38%;
-  border-right: 4px solid #4e4e4e;
+  border-right: 2px solid #d7d2cc;
   padding-right: 60px;
   text-align: left;
   /*float: left;*/
@@ -126,7 +129,7 @@ export default {
 
 .relevant-service {
   width: 36%;
-  border-right: 4px solid #4e4e4e;
+  border-right: 2px solid #d7d2cc;
   text-align: left;
   padding: 0 10px;
   /*float: left;*/

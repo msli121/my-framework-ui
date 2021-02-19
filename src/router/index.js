@@ -7,6 +7,7 @@ import homePage from '@/components/homePage.vue'
 import adminIndex from "@/components/admin/adminIndex"
 import login from "@/views/login"
 import account from "@/views/account"
+import custom from "../views/custom";
 
 Vue.use(VueRouter)
 
@@ -44,32 +45,15 @@ const routes = [
       { path: 'page', component: homePage},
       { path: 'ocr', component: ocr },
       { path: 'pdf', component: pdf },
-      // { path: 'custom', component: custom },
+      { path: 'custom', component: custom },
+      { path: 'account', component: account},
     ]
-  },
-
-  {
-    path: '/ocr',
-    name: 'ocr',
-    
-    component: ocr
-  },
-
-  {
-    path: '/pdf',
-    name: 'pdf',
-    component: pdf
   },
 
   {
     path: '/login',
     name: 'login',
     component: login
-  },
-  {
-    path: '/account',
-    name: 'account',
-    component: account
   },
 
   {
