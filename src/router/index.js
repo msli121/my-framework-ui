@@ -8,6 +8,7 @@ import adminIndex from "@/components/admin/adminIndex"
 import login from "@/views/login"
 import account from "@/views/account"
 import custom from "../views/custom";
+import baseInfo from "@/components/personalCenter/baseInfo"
 
 Vue.use(VueRouter)
 
@@ -46,7 +47,14 @@ const routes = [
       { path: 'ocr', component: ocr },
       { path: 'pdf', component: pdf },
       { path: 'custom', component: custom },
-      { path: 'account', component: account},
+      {
+        path: 'account',
+        component: account,
+        redirect: '/home/account/baseInfo',
+        children: [
+          {path: "baseInfo", component: baseInfo}
+        ]
+      },
     ]
   },
 

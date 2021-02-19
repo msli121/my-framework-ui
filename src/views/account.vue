@@ -53,7 +53,7 @@
             </el-menu>
           </div>
         </el-aside>
-        <el-main>
+        <el-main style="width: 900px;margin-left: 20px;padding: 0;">
           <router-view></router-view>
         </el-main>
       </el-container>
