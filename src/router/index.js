@@ -8,8 +8,6 @@ import adminIndex from "@/components/admin/adminIndex"
 import login from "@/views/login"
 import account from "@/views/account"
 import custom from "../views/custom";
-import baseInfo from "@/components/personalCenter/baseInfo"
-
 Vue.use(VueRouter)
 
 // 原生push报错处理
@@ -52,7 +50,11 @@ const routes = [
         component: account,
         redirect: '/home/account/baseInfo',
         children: [
-          {path: "baseInfo", component: baseInfo}
+          {path: "baseInfo", component:() => import("@/components/personalCenter/baseInfo.vue")},
+          {path: "vip", component: () => import("@/components/personalCenter/vip.vue")},
+          {path: "uploadRecord", component: () => import("@/components/personalCenter/uploadRecord.vue")},
+          {path: "buyRecord", component: () => import("@/components/personalCenter/buyRecord.vue")},
+          {path: "accountSecurity", component: () => import("@/components/personalCenter/accountSecurity.vue")}
         ]
       },
     ]

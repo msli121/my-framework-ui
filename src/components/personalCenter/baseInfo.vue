@@ -3,32 +3,109 @@
     <div class="account-item-title">
       <i class="el-icon-user"></i>
       <span style="display: inline-block; width: 20px;"></span>
-      <span class="account-item-title-content">我的信息</span>
+      <span class="account-item-title-content">基本信息</span>
+    </div>
+    <div class="account-item-body">
+      <el-form ref="form" :model="personalInfoForm" label-width="80px">
+        <el-form-item label="头像:" style="text-align: left;margin-bottom: 12px;">
+          <el-avatar :size="50" :src="userProfile.url"></el-avatar>
+          <el-button type="text" style="font-size: 12px;margin-left: 10px;" @click="handleChangeAvatar">更换头像</el-button>
+        </el-form-item>
+        <el-form-item label="用户名:">
+          <el-input v-model="personalInfoForm.userName"></el-input>
+        </el-form-item>
+        <el-form-item label="性别:" style="text-align: left;">
+          <el-radio-group v-model="personalInfoForm.gender">
+            <el-radio label="x">保密</el-radio>
+            <el-radio label="male">男</el-radio>
+            <el-radio label="female">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="出生日期:">
+          <el-col :span="11">
+            <el-date-picker type="date" placeholder="选择日期" v-model="personalInfoForm.birthday" style="width: 100%;"></el-date-picker>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="所在城市:">
+          <el-input v-model="personalInfoForm.city"></el-input>
+        </el-form-item>
+        <el-form-item label="公司/学校:">
+          <el-input v-model="personalInfoForm.organization"></el-input>
+        </el-form-item>
+        <el-form-item style="text-align: right;">
+          <el-button type="primary" size="small" @click="updatePersonalInfo">更新信息</el-button>
+        </el-form-item>
+
+      </el-form>
     </div>
   </div>
 </template>
-<script>
 
+<script>
+  export default {
+    name: "baseInfo",
+    data() {
+      return {
+        personalInfoForm: {
+          userName: "admin",
+          gender: "male",
+          birthday: "",
+          city: "",
+          organization: ""
+        }
+      }
+    },
+    computed: {
+      userProfile() {
+        if (this.$store.state.userProfile.userType === 'weChat') {
+          return {
+            fit: "fill",
+            username: this.$store.state.userProfile.username,
+            url: this.$store.state.userProfile.headImgUrl,
+          };
+        } else {
+          return {
+            fit: "fill",
+            username: this.$store.state.userProfile.username,
+            url: require("@/assets/profile/" + this.$store.state.userProfile.sysHeadIcon),
+          };
+        }
+      }
+    },
+    methods: {
+      handleChangeAvatar() {
+        this.$message.error("暂未实现！！");
+      },
+      updatePersonalInfo() {
+
+      }
+    }
+  }
 </script>
+
 <style scoped lang="less">
-.account-item-title {
-  width: 100%;
-  text-align: left;
-  border-top: 1px solid #ccd0d7;
-  border-right: 1px solid #ccd0d7;
-  border-left: 1px solid #ccd0d7;
-  //border-bottom: 1px solid #e2e9ed;
-  border-bottom: 1px solid #ddd;
-  border-radius: 4px 4px 0 0;
-  box-sizing: border-box;
-  background: #eef2f4;
-  padding: 12px 28px;
-  min-height: 46px;
-  color: rgb(0, 205, 172);
-}
-.account-item-title-content {
-  display: inline-block;
-  font-size: 16px;
-  cursor: default;
-}
+  .account-item-title {
+    width: 100%;
+    text-align: left;
+    border-bottom: 1px solid #e2e9ed;
+    border-radius: 4px 4px 0 0;
+    box-sizing: border-box;
+    background: #eef2f4;
+    padding: 12px 28px;
+    min-height: 46px;
+    color: rgb(0, 205, 172);
+  }
+  .account-item-title-content {
+    display: inline-block;
+    font-size: 16px;
+    cursor: default;
+  }
+  /deep/ .el-form {
+    width: 460px;
+  }
+  .account-item-body {
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+  }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="body-container">
-      <el-container>
+      <el-container style="height: 100%;">
         <el-aside width="200px">
           <div class="user_info_box">
             <div class="user-info-top">
@@ -33,27 +33,31 @@
           <div class="user_center_box">
             <h5>个人中心</h5>
             <el-menu class="el-menu-vertical-demo" :collapse="false" style="text-align: left;border-right:none;"
-                     active-text-color="#00cdac" default-active="person-info">
-              <el-menu-item index="person-info">
+                     active-text-color="#00cdac" :default-active="defaultActive" :router="true">
+              <el-menu-item index="/home/account/baseInfo">
                 <i class="el-icon-user"></i>
-                <span slot="title">我的信息</span>
+                <span slot="title">个人信息</span>
               </el-menu-item>
-              <el-menu-item index="vip">
+              <el-menu-item index="/home/account/vip">
                 <i class="el-icon-medal"></i>
                 <span slot="title">开通会员</span>
               </el-menu-item>
-              <el-menu-item index="upload">
+              <el-menu-item index="/home/account/uploadRecord">
                 <i class="el-icon-upload"></i>
                 <span slot="title">上传记录</span>
               </el-menu-item>
-              <el-menu-item index="buy-record">
+              <el-menu-item index="/home/account/buyRecord">
                 <i class="el-icon-s-order"></i>
                 <span slot="title">购买记录</span>
+              </el-menu-item>
+              <el-menu-item index="/home/account/accountSecurity">
+                <i class="el-icon-lock"></i>
+                <span slot="title">账号安全</span>
               </el-menu-item>
             </el-menu>
           </div>
         </el-aside>
-        <el-main style="width: 900px;margin-left: 20px;padding: 0;">
+        <el-main style="width: 900px;margin-left: 20px;padding: 0;border: 1px solid #ccd0d7;">
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -72,10 +76,12 @@
     name: "account",
     components: {Icon, pageFooter},
     mounted() {
-      console.log("account mounted!");
+      this.defaultActive = this.$route.path;
     },
     data() {
-      return {}
+      return {
+        defaultActive: "/home/account/baseInfo",
+      }
     },
     computed: {
       userProfile() {
@@ -101,16 +107,20 @@
 <style scoped lang="less">
   .body-container {
     width: 1200px;
-    min-height: 800px;
+    min-height: 900px;
     margin: 0 auto;
     padding-top: 20px;
     padding-bottom: 40px;
+    /*background-color: #f0f0f0;*/
     /*background-color: #D3DCE6;*/
   }
   .el-aside {
     color: #333;
+    /*background-color: #f0f0f0;*/
+    padding-bottom: 0;
   }
   .el-main {
+    /*background-color: #f0f0f0;*/
   }
   .user_info_box {
     border: 1px solid #c9ced2;
@@ -166,8 +176,14 @@
   .user_center_box {
     border: 1px solid #c9ced2;
     border-radius: 4px;
-    margin-bottom: 10px;
     /*background: #f6fcff;*/
+  }
+  /deep/.user_center_box  a{
+    text-decoration: none;
+    color: #303133;
+  }
+  /deep/.user_center_box  a:focus{
+    color: #00cdac;
   }
   .user_center_box h5 {
     text-align: center;
