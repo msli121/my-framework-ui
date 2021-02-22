@@ -211,13 +211,14 @@ export default {
       const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
       if(isLt2M && isAllowedType) {
         this.transferImag2Base64(file.raw).then(res => {
-          let base64 = res.split(",");
-          console.log("base64 result ", base64);
+          // let base64 = res.split(",");
+          console.log("base64 result ", res);
           let requestBody = {
             fileName: file.name,
             fileSize: file.size,
             fileType: file.raw.type,
-            fileData: base64[1]
+            fileContent: res,
+            sourceGroup: 'ocr'
           };
           that.showLoading = true;
           that.imageUrl = res;

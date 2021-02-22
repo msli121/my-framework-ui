@@ -94,8 +94,6 @@
   .uid {
     color: rgb(141, 158, 167);
     font-size: 14px;
-    height: 46px;
-    line-height: 46px;
     margin-left: 5px;
   }
   .account-item-title-content {
