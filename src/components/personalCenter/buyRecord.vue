@@ -6,7 +6,7 @@
       <span class="account-item-title-content">购买记录</span>
     </div>
     <div style="margin: 20px; display: flex; justify-content: center;">
-      <div>购买记录</div>
+      <div>暂无购买记录</div>
     </div>
   </div>
 </template>

@@ -107,7 +107,7 @@
 <style scoped lang="less">
   .body-container {
     width: 1200px;
-    min-height: 900px;
+    min-height: 800px;
     margin: 0 auto;
     padding-top: 20px;
     padding-bottom: 40px;
@@ -176,6 +176,7 @@
   .user_center_box {
     border: 1px solid #c9ced2;
     border-radius: 4px;
+    height: 420px;
     /*background: #f6fcff;*/
   }
   /deep/.user_center_box  a{
