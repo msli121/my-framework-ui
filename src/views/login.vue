@@ -5,7 +5,7 @@
         <h3 class="login_title">登录</h3>
         <el-tabs v-model="loginType" @tab-click="handleClick" stretch>
           <el-tab-pane label="微信扫码" name="weChat">
-            <wx-login id="wxLogin"
+            <wx-login id="wxLogin" v-loading="loading"
                       theme="black"
                       :state="state"
                       :appid="appId"
@@ -36,7 +36,7 @@
                 ></el-input>
               </el-form-item>
               <el-form-item label="" style="width: 100%">
-                <el-button type="primary" style="width: 100%" v-on:click="handleLogin">登录</el-button>
+                <el-button type="primary" style="width: 100%" @click="handlePasswordLogin">登录</el-button>
               </el-form-item>
             </el-form>
           </el-tab-pane>
@@ -196,8 +196,9 @@ export default {
 
   methods: {
 
-    handleLogin() {
+    handlePasswordLogin() {
       let that = this;
+      this.loading = true;
       login(this.loginForm.username, this.loginForm.password).then(res => {
           console.log("successResponse", res);
           if (res.flag === "T") {
@@ -223,7 +224,9 @@ export default {
           } else {
             that.$message.error(res.msg);
           }
+          that.loading = false;
         }).catch( e => {
+        that.loading = false;
           console.log("login error", e);
           that.$message.error("服务器异常");
         });
@@ -233,27 +236,29 @@ export default {
       let that = this;
       this.$refs['registryForm'].validate(res => {
         if(res) {
-          registry(this.registryForm)
-              .then( res => {
-                console.log("successResponse", res);
-                if (res.flag === "T") {
-                  // 更新store中用户信息
-                  that.$store.commit("loginSuccess", res.data);
-                  that.$message({
-                    type: 'success',
-                    message: res.msg
-                  });
-                  let path = this.$route.query.redirect;
-                  // 页面按需跳转
-                  that.$router.replace({path: path === '/' || path === undefined ? '/home/page' : path});
-                } else {
-                  that.$message.error(res.msg);
-                }
-              })
-              .catch(e => {
-                console.log(e);
-                this.$message.error("服务器异常");
+          that.loading = true;
+          registry(this.registryForm).then( res => {
+            console.log("successResponse", res);
+            if (res.flag === "T") {
+              // 更新store中用户信息
+              that.$store.commit("loginSuccess", res.data);
+              that.$message({
+                type: 'success',
+                message: res.msg
               });
+              let path = this.$route.query.redirect;
+              // 页面按需跳转
+              that.$router.replace({path: path === '/' || path === undefined ? '/home/page' : path});
+            } else {
+              that.$message.error(res.msg);
+            }
+            that.loading = false;
+          })
+          .catch(e => {
+            that.loading = false;
+            console.log(e);
+            this.$message.error("服务器异常");
+          });
         }
       })
     },
@@ -269,6 +274,7 @@ export default {
     getUserProfile(params) {
       let that= this;
       console.log("开始调用微信登录接口！！！", )
+      that.loading = true;
       loginByWechat(params).then(res => {
         if(res.flag === "T") {
           that.$store.commit("loginSuccess", res.data);
@@ -290,7 +296,9 @@ export default {
         } else {
           that.$message.error(res.msg);
         }
+        that.loading = false;
       }).catch( e => {
+        that.loading = false;
         console.log("login error", e);
         that.$message.error("服务器异常");
       });

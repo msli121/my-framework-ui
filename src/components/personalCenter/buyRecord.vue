@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="account-item-title">
-      <i class="el-icon-user"></i>
+      <i class="el-icon-s-order"></i>
       <span style="display: inline-block; width: 20px;"></span>
       <span class="account-item-title-content">购买记录</span>
     </div>

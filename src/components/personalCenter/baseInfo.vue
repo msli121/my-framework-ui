@@ -3,19 +3,19 @@
     <div class="account-item-title">
       <i class="el-icon-user"></i>
       <span style="display: inline-block; width: 20px;"></span>
-      <span class="account-item-title-content">基本信息</span>
+      <span class="account-item-title-content">基本信息<span class="uid">(UID:{{userProfile.uid}})</span></span>
     </div>
     <div class="account-item-body">
-      <el-form ref="form" :model="personalInfoForm" label-width="80px">
+      <el-form ref="form" :model="userProfile" label-width="80px">
         <el-form-item label="头像:" style="text-align: left;margin-bottom: 12px;">
-          <el-avatar :size="50" :src="userProfile.url"></el-avatar>
+          <el-avatar :size="50" :src="avatar.url"></el-avatar>
           <el-button type="text" style="font-size: 12px;margin-left: 10px;" @click="handleChangeAvatar">更换头像</el-button>
         </el-form-item>
         <el-form-item label="用户名:">
-          <el-input v-model="personalInfoForm.userName"></el-input>
+          <el-input v-model="userProfile.username"></el-input>
         </el-form-item>
         <el-form-item label="性别:" style="text-align: left;">
-          <el-radio-group v-model="personalInfoForm.gender">
+          <el-radio-group v-model="userProfile.sex">
             <el-radio label="x">保密</el-radio>
             <el-radio label="male">男</el-radio>
             <el-radio label="female">女</el-radio>
@@ -23,14 +23,14 @@
         </el-form-item>
         <el-form-item label="出生日期:">
           <el-col :span="11">
-            <el-date-picker type="date" placeholder="选择日期" v-model="personalInfoForm.birthday" style="width: 100%;"></el-date-picker>
+            <el-date-picker type="date" placeholder="选择日期" v-model="userProfile.birthday" style="width: 100%;"></el-date-picker>
           </el-col>
         </el-form-item>
         <el-form-item label="所在城市:">
-          <el-input v-model="personalInfoForm.city"></el-input>
+          <el-input v-model="userProfile.city"></el-input>
         </el-form-item>
         <el-form-item label="公司/学校:">
-          <el-input v-model="personalInfoForm.organization"></el-input>
+          <el-input v-model="userProfile.organization"></el-input>
         </el-form-item>
         <el-form-item style="text-align: right;">
           <el-button type="primary" size="small" @click="updatePersonalInfo">更新信息</el-button>
@@ -46,30 +46,25 @@
     name: "baseInfo",
     data() {
       return {
-        personalInfoForm: {
-          userName: "admin",
-          gender: "male",
-          birthday: "",
-          city: "",
-          organization: ""
-        }
       }
     },
     computed: {
-      userProfile() {
+      avatar() {
         if (this.$store.state.userProfile.userType === 'weChat') {
           return {
             fit: "fill",
-            username: this.$store.state.userProfile.username,
             url: this.$store.state.userProfile.headImgUrl,
           };
         } else {
           return {
             fit: "fill",
-            username: this.$store.state.userProfile.username,
             url: require("@/assets/profile/" + this.$store.state.userProfile.sysHeadIcon),
           };
         }
+      },
+
+      userProfile() {
+        return this.$store.state.userProfile;
       }
     },
     methods: {
@@ -84,6 +79,7 @@
 </script>
 
 <style scoped lang="less">
+
   .account-item-title {
     width: 100%;
     text-align: left;
@@ -94,6 +90,13 @@
     padding: 12px 28px;
     min-height: 46px;
     color: rgb(0, 205, 172);
+  }
+  .uid {
+    color: rgb(141, 158, 167);
+    font-size: 14px;
+    height: 46px;
+    line-height: 46px;
+    margin-left: 5px;
   }
   .account-item-title-content {
     display: inline-block;
