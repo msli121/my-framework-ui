@@ -5,15 +5,21 @@
       <span style="display: inline-block; width: 20px;"></span>
       <span class="account-item-title-content">购买记录</span>
     </div>
-    <div style="margin: 20px; display: flex; justify-content: center;">
-      <div>暂无购买记录</div>
+    <div>
+      <div>
+        <icon name="no-data" height="128" width="128"></icon>
+        <p style="color: #AAA;">暂无购买记录</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+  import Icon from 'vue-svg-icon/Icon'
+
   export default {
     name: "baseInfo",
+    components: {Icon},
     data() {
       return {
         personalInfoForm: {

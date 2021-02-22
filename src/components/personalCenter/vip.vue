@@ -5,15 +5,20 @@
       <span style="display: inline-block; width: 20px;"></span>
       <span class="account-item-title-content">VIP</span>
     </div>
-    <div style="margin: 20px; display: flex; justify-content: center;">
-      <div>您还未开通任何VIP</div>
+    <div>
+      <div>
+        <icon name="no-data" height="128" width="128"></icon>
+        <p style="color: #AAA;">您还未开通任何VIP</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+  import Icon from 'vue-svg-icon/Icon'
   export default {
     name: "baseInfo",
+    components: {Icon},
     data() {
       return {
         personalInfoForm: {
