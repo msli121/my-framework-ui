@@ -99,13 +99,21 @@ export function updatePermissionStatus(data) {
 }
 
 /**
- * 业务 OCR API
+ * OCR API
  */
 // 上传单张照片
 export function uploadSinglePicture(data) {
-  return post("/ocr/single", data)
+  return post("/ocr/single-upload", data)
 }
 // 识别结果，编辑保存
 export function editAndSaveOcrResult(data) {
   return post("/ocr/edit-save", data)
+}
+
+/**
+ * file API
+ */
+// 获取当前登录用户所有的文件
+export function getAllUploadFile() {
+  return get("/file/get-all")
 }

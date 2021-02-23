@@ -85,7 +85,7 @@
             <div style="width: 80%;  border: 1px dashed #f68084;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
               <div style=" height: 400px; overflow-y: auto; overflow-x: auto; position: relative;"
                    v-loading="showLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-                <el-input v-for="(item, index) in selectedOcrResult" :key="index"
+                <el-input v-for="(item, index) in JSON.parse(selectedOcrResult.recognitionContent)" :key="index"
                     type="text"
                     :class="{'confidence-low': item.confidence < confidence }"
                     :style="'display: inline-block; ' + 'position: absolute; ' +
@@ -212,7 +212,7 @@ export default {
       if(isLt2M && isAllowedType) {
         this.transferImag2Base64(file.raw).then(res => {
           // let base64 = res.split(",");
-          console.log("base64 result ", res);
+          // console.log("base64 result ", res);
           let requestBody = {
             fileName: file.name,
             fileSize: file.size,
@@ -221,28 +221,31 @@ export default {
             sourceGroup: 'ocr'
           };
           that.showLoading = true;
-          that.imageUrl = res;
           uploadSinglePicture(requestBody).then(res => {
+            console.log("res",res);
             if(res.flag === "T") {
               that.$message.success("上传成功");
               that.selectedOcrResult = res.data;
               that.ocrResultList.push(res.data);
+              console.log("that.ocrResultList", that.ocrResultList);
+              console.log("that.selectedOcrResult", that.selectedOcrResult);
             } else {
+              that.$message.error(res.msg);
               that.fileList.forEach((item, index, arr) => {
                 if(item.uid === file.uid) {
                   arr.splice(index, 1);
                 }
               });
-              that.$message.error(res.msg);
             }
             that.showLoading = false;
           }).catch(error => {
+            that.showLoading = false;
+            console.log("上传失败，请重试");
             that.fileList.forEach((item, index, arr) => {
               if(item.uid === file.uid) {
                 arr.splice(index, 1);
               }
             });
-            that.showLoading = false;
             that.$message.error("上传失败，请重试");
             console.log(error);
           })
@@ -272,8 +275,9 @@ export default {
       } else {
         let that = this;
         let copyText = "";
-        for(let i=1; i <= this.selectedOcrResult.length; i++) {
-          copyText = copyText + "[" + i + "]" + this.selectedOcrResult[i-1].text + "\n";
+        let recognitionContent = JSON.parse(this.selectedOcrResult.recognitionContent);
+        for(let i=1; i <= recognitionContent.length; i++) {
+          copyText = copyText + "[" + i + "]" + recognitionContent[i-1].text + "\n";
         }
         this.$copyText(copyText).then(
             function (e) {
@@ -292,11 +296,18 @@ export default {
       if(!this.loginSuccess) {
         this.$message.error("请先登录");
       } else {
-        let requestBody = {
-          ocrResult: []
-        }
-        editAndSaveOcrResult(requestBody).then(res => {
-          console.log("res", res)
+        let that = this;
+        that.showLoading = true;
+        editAndSaveOcrResult(this.selectedOcrResult).then(res => {
+          if(res.flag === 'T') {
+            this.$message.success("保存成功");
+          } else {
+            this.$message.error(res.msg);
+          }
+          that.showLoading = false;
+        }).catch(e => {
+          that.showLoading = false;
+          console.log(e);
         })
       }
     },
