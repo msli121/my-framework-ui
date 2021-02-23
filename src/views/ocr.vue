@@ -85,8 +85,7 @@
             <div style="width: 80%;  border: 1px dashed #f68084;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
               <div style=" height: 400px; overflow-y: auto; overflow-x: auto; position: relative;"
                    v-loading="showLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-                <el-input v-for="(item, index) in JSON.parse(selectedOcrResult.recognitionContent)" :key="index"
-                    type="text"
+                <el-input v-for="(item, index) in selectedOcrResult.recognitionContent" :key="index"
                     :class="{'confidence-low': item.confidence < confidence }"
                     :style="'display: inline-block; ' + 'position: absolute; ' +
                             'width: ' + (item.text_region[1][0] - item.text_region[0][0] + 40) + 'px;' +
@@ -211,14 +210,14 @@ export default {
       const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
       if(isLt2M && isAllowedType) {
         this.transferImag2Base64(file.raw).then(res => {
-          // let base64 = res.split(",");
-          // console.log("base64 result ", res);
+          console.log("base64 result ", res);
           let requestBody = {
             fileName: file.name,
             fileSize: file.size,
             fileType: file.raw.type,
             fileContent: res,
-            sourceGroup: 'ocr'
+            sourceGroup: 'ocr',
+            uid: this.$store.state.userProfile.uid
           };
           that.showLoading = true;
           uploadSinglePicture(requestBody).then(res => {
@@ -226,7 +225,8 @@ export default {
             if(res.flag === "T") {
               that.$message.success("上传成功");
               that.selectedOcrResult = res.data;
-              that.ocrResultList.push(res.data);
+              that.selectedOcrResult.recognitionContent = JSON.parse(res.data.recognitionContent);
+              that.ocrResultList.push(that.selectedOcrResult);
               console.log("that.ocrResultList", that.ocrResultList);
               console.log("that.selectedOcrResult", that.selectedOcrResult);
             } else {
@@ -275,7 +275,7 @@ export default {
       } else {
         let that = this;
         let copyText = "";
-        let recognitionContent = JSON.parse(this.selectedOcrResult.recognitionContent);
+        let recognitionContent = this.selectedOcrResult.recognitionContent;
         for(let i=1; i <= recognitionContent.length; i++) {
           copyText = copyText + "[" + i + "]" + recognitionContent[i-1].text + "\n";
         }
@@ -295,6 +295,8 @@ export default {
     handleEditSave() {
       if(!this.loginSuccess) {
         this.$message.error("请先登录");
+      } else if(this.selectedOcrResult.id === 0) {
+        this.$message.warning("示例图片无法保存，请上传图片");
       } else {
         let that = this;
         that.showLoading = true;
@@ -449,22 +451,11 @@ export default {
     min-height: 600px;
     text-align: center;
     padding: 0px 20px 20px 20px;
-    //display: flex;
-    //flex-flow: nowrap;
-    //justify-content: space-between;
-    //align-items: center;
-
-    //border: 1px dashed #f68084;
     border: 1px solid #ebebeb;
-    //padding: 0 20px 0px 20px;
-    //border: 1px dashed #d9d9d9;
-    //border-radius: 6px;
     border-radius: 6px;
   }
 
   .show-container > h3 {
-    //font-weight: 400;
-    //color: #1f2f3d;
     height: 64px;
     line-height: 64px;
     text-align: center;
@@ -493,12 +484,6 @@ export default {
   }
 
   .show-result {
-    //height: 400px;
-    //width: 580px;
-    //border: 1px dashed #d9d9d9;
-    //border-radius: 6px;
-    //box-sizing: border-box;
-    //overflow: auto;
     height: 400px;
     overflow-y: auto;
   }

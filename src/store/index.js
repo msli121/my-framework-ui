@@ -12,11 +12,9 @@ export default new Vuex.Store({
     adminMenus: [],
   },
   mutations: {
-
     initAdminMenu (state, menus) {
       state.adminMenus = menus
     },
-
     loginSuccess (state, data) {
       state.username = data.username;
       state.userProfile = data;
@@ -25,7 +23,6 @@ export default new Vuex.Store({
       window.sessionStorage.setItem('loginSuccess', JSON.stringify('true'));
       window.sessionStorage.setItem('userProfile', JSON.stringify(data));
     },
-
     logout (state) {
       state.username = '';
       state.userProfile = {};
@@ -35,6 +32,15 @@ export default new Vuex.Store({
       window.sessionStorage.removeItem('adminMenus');
       window.sessionStorage.removeItem('loginSuccess');
       window.sessionStorage.removeItem('userProfile');
+    },
+    updateAvatar(state, avatar) {
+      state.userProfile.avatar = avatar;
+    },
+    updateBaseInfo(state, baseInfo) {
+      state.userProfile.birthday = baseInfo.birthday;
+      state.userProfile.city = baseInfo.city;
+      state.userProfile.organization = baseInfo.organization;
+      state.userProfile.sex = baseInfo.sex;
     }
   },
   actions: {

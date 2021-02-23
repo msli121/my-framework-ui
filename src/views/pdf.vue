@@ -58,8 +58,8 @@
           <h3>识别效果</h3>
           <div style="display: flex; justify-content: space-between">
             <div style="width: 60%; border: 1px solid #ebebeb;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
-              <div class="ocr-image-show" style=" height: 400px; overflow-y: auto; overflow-x: auto">
-                <el-image :src="selectedImageSrc" style="display: block;" fit="container"></el-image>
+              <div style=" height: 400px; overflow-y: auto; overflow-x: auto">
+                <el-image :src="selectedImageSrc"  fit="container"></el-image>
               </div>
             </div>
             <div class="ocr-result-show" style=" width:35%;border: 1px solid #ebebeb;border-radius: 3px;padding: 8px 0px 8px 8px;">

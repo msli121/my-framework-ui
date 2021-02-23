@@ -19,7 +19,7 @@ Vue.prototype.$message = Message;
 
 // 全局守卫路由
 router.beforeEach((to, from, next) => {
-  console.log("全局守卫： username: ", store.state.username, " ; path:", to.path);
+  // console.log("全局守卫： username: ", store.state.username, " ; path:", to.path);
 
   if(to.path.startsWith('/login')) {
     next();

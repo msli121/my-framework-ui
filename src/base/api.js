@@ -1,5 +1,9 @@
 import { get, post } from "../utils/request";
 
+export function isEmpty(item) {
+  return item == null || item === '';
+}
+
 // 登录
 export function login(username, password) {
   return post("/login", {username, password});
@@ -114,6 +118,29 @@ export function editAndSaveOcrResult(data) {
  * file API
  */
 // 获取当前登录用户所有的文件
-export function getAllUploadFile() {
-  return get("/file/get-all")
+export function getAllUploadFile(uid) {
+  return get("/file/get-all/" + uid)
+}
+// 收藏指定文件
+export function setFileStar(fileId) {
+  return get("/file/set-star/" + fileId)
+}
+// 取消收藏指定文件
+export function cancelFileStar(fileId) {
+  return get("/file/cancel-star/" + fileId)
+}
+// 删除指定文件
+export function deleteFile(fileId) {
+  return get("/file/delete/" + fileId)
+}
+/**
+ * user API
+ */
+// 获取用户基本信息
+export function getUserBaseInfo(uid) {
+  return get("/user/base-info/" + uid)
+}
+// 更新用户基本信息
+export function updateUserBaseInfo(user) {
+  return post("/user/update-info", user)
 }
