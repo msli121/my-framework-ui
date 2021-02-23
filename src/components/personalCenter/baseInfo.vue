@@ -12,7 +12,8 @@
           <el-button type="text" style="font-size: 12px;margin-left: 10px;" @click="handleChangeAvatar">更换头像</el-button>
         </el-form-item>
         <el-form-item label="用户名:">
-          <el-input v-model="userProfile.username"></el-input>
+          <div style="text-align: left; font-size: 16px;color: #8492a6;">{{userProfile.username}}</div>
+<!--          <el-input v-model="userProfile.username" readonly></el-input>-->
         </el-form-item>
         <el-form-item label="性别:" style="text-align: left;">
           <el-radio-group v-model="userProfile.sex">
