@@ -37,7 +37,7 @@
             :on-change="handlePictureChange"
             :auto-upload="false">
             <i slot="default" class="el-icon-plus"></i>
-            <div slot="tip" class="el-upload__tip" style="font-weight: bold;">只能上传 jpg/jpeg/png 文件，且不超过 2MB</div>
+            <div slot="tip" class="el-upload__tip" style="font-weight: bold;">支持上传 jpg/jpeg/png 文件，大小不超过 6MB</div>
             <div slot="file" slot-scope="{file}">
               <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
               <span class="el-upload-list__item-actions">
@@ -206,9 +206,9 @@ export default {
       this.fileList = fileList;
       this.selectedImageSrc = file.url;
       let that = this;
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt6M = file.size / 1024 / 1024 < 6;
       const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
-      if(isLt2M && isAllowedType) {
+      if(isLt6M && isAllowedType) {
         this.transferImag2Base64(file.raw).then(res => {
           console.log("base64 result ", res);
           let requestBody = {

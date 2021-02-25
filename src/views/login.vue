@@ -12,9 +12,9 @@
                       :scope="scope"
                       :redirect_uri="redirect_uri"></wx-login>
           </el-tab-pane>
-          <el-tab-pane label="短信验证" name="phoneNumber">
-            <div style="min-height: 200px;">暂无实现</div>
-          </el-tab-pane>
+<!--          <el-tab-pane label="短信验证" name="phoneNumber">-->
+<!--            <div style="min-height: 200px;">暂无实现</div>-->
+<!--          </el-tab-pane>-->
           <el-tab-pane label="账号密码" name="password">
             <el-form :model="loginForm" label-position="left" label-width="0px" v-loading="loading">
               <el-form-item label="">
@@ -148,8 +148,8 @@ export default {
       redirect_uri: encodeURI("https://www.performercn.com/login"),
       // 账号密码登录参数
       loginForm: {
-        username: "admin",
-        password: "123",
+        username: "🐺",
+        password: "",
       },
       // 注册参数
       registryForm: {
@@ -189,7 +189,8 @@ export default {
         params.state = this.$route.query.state;
       }
       console.log("code 1111111111", this.$route.query.code);
-      this.getUserProfile(params);
+      console.log("调用微信登陆：", params);
+      // this.getUserProfile(params);
     }
 
   },
