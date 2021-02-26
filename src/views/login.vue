@@ -54,10 +54,8 @@
       <div v-else>
         <h3 class="registry_title">注册</h3>
         <el-form :model="registryForm" label-position="right" label-width="80px"
-                 v-loading="loading" ref="registryForm"
-                 :rules="registry_rules">
-          <el-form-item label="用户名" prop="username"
-                        :rules="{required: true, message: '用户名不能为空', trigger: 'blur'}">
+                 v-loading="loading" ref="registryForm" :rules="registry_rules">
+          <el-form-item label="用户名" prop="username">
             <el-input type="text"
                       v-model="registryForm.username"
                       placeholder="请输入用户名"
@@ -109,6 +107,7 @@
 
   import {login, loginByWechat, registry} from "../base/api"
 import wxLogin from 'vue-wxlogin'
+  import {checkUsername} from "../utils/commonFunction";
 
 export default {
   name: "login",
@@ -132,6 +131,17 @@ export default {
         callback(new Error('两次输入密码不一致!'));
       } else {
         callback();
+      }
+    };
+    let validateUsername = (rule, value, callback) => {
+      if(value === '') {
+        callback(new Error('请输入用户名'));
+      } else {
+        if(checkUsername(value)) {
+          callback();
+        } else {
+          callback(new Error('用户名不能包含特殊字符'));
+        }
       }
     };
     return {
@@ -165,6 +175,9 @@ export default {
         passwordConfirm: [
           { validator: validatePasswordConfirm, trigger: 'blur' }
         ],
+        username: [
+          { validator: validateUsername, trigger: 'blur'}
+        ]
       }
     };
   },
@@ -188,9 +201,7 @@ export default {
       if(this.$route.query.state) {
         params.state = this.$route.query.state;
       }
-      console.log("code 1111111111", this.$route.query.code);
-      console.log("调用微信登陆：", params);
-      // this.getUserProfile(params);
+      this.getUserProfile(params);
     }
 
   },
@@ -274,7 +285,7 @@ export default {
 
     getUserProfile(params) {
       let that= this;
-      console.log("开始调用微信登录接口！！！", )
+      console.log("开始调用微信登录接口！！！", params);
       that.loading = true;
       loginByWechat(params).then(res => {
         if(res.flag === "T") {
@@ -291,8 +302,7 @@ export default {
             }
           }
           that.$router.replace({
-            path:
-                toPath === "/" || toPath === undefined ? "/home/page" : toPath,
+            path: toPath === "/" || toPath === undefined ? "/home/page" : toPath,
           });
         } else {
           that.$message.error(res.msg);
