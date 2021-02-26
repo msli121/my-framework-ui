@@ -90,7 +90,7 @@
         })
       },
       handleChangeAvatar() {
-        this.$message.error("暂未实现！！");
+        this.$message.info("暂时无法修改头像 ^_^");
       },
       updatePersonalInfo() {
         console.log(this.baseInfo);

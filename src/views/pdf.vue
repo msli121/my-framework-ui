@@ -24,48 +24,33 @@
       <div class="demo-show-container">
         <h2>功能演示</h2>
         <div class="show-container">
-          <h3>上传图片</h3>
-          <el-upload
-              action="#"
-              with-credentials
-              :multiple="multiple"
-              :file-list="fileList"
-              :limit="limit"
-              :on-exceed="handleExceed"
-              list-type="picture-card"
-              :on-change="handlePictureChange"
-              :auto-upload="false">
-            <i slot="default" class="el-icon-plus"></i>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过2MB</div>
-            <div slot="file" slot-scope="{file}">
-              <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
-              <span class="el-upload-list__item-actions">
-                <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                  <i class="el-icon-zoom-in"></i>
-                </span>
-                <span class="el-upload-list__item-delete" @click="handleFileOcr(file)">
-                  <i class="el-icon-full-screen"></i>
-                </span>
-                <span class="el-upload-list__item-delete" @click="handleRemove(file)">
-                  <i class="el-icon-delete"></i>
-                </span>
-              </span>
-            </div>
-          </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
           <h3>识别效果</h3>
-          <div style="display: flex; justify-content: space-between">
-            <div style="width: 60%; border: 1px solid #ebebeb;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
-              <div style=" height: 400px; overflow-y: auto; overflow-x: auto">
-                <el-image :src="selectedImageSrc"  fit="container"></el-image>
-              </div>
+          <div class="pdf-show-box" style="width: 600px; height: 600px;border: 1.8px solid rgba(0,0,0,.65);border-radius: 3px;transition: all 0.2s ease 0s;padding: 8px 0 0 0;" >
+            <div class="pdf-tools" style="border-bottom: 2px solid rgb(235, 235, 235);padding: 0 0 8px 8px;">
+              <el-pagination
+                  :page-size="1"
+                  :pager-count="4"
+                  background
+                  @current-change="handleCurrentChange"
+                  :current-page.sync="currentPage"
+                  layout="total, prev, pager, next, jumper"
+                  :total="totalPdfPage">
+              </el-pagination>
             </div>
-            <div class="ocr-result-show" style=" width:35%;border: 1px solid #ebebeb;border-radius: 3px;padding: 8px 0px 8px 8px;">
-              <div class="show-result" v-loading="showLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-                <span style="display: inline-block; width: 100%;" v-for="(item, index) in selectedOcrResult" :key="index">[{{index + 1}}] {{item.text}}</span>
-              </div>
+            <div class="pdf-content" v-loading="padLoading"
+                 element-loading-text="拼命加载中"
+                 element-loading-spinner="el-icon-loading"
+                 element-loading-background="rgba(0, 0, 0, 0.8)"
+                 style="width: 100%; height: 562px;overflow:auto;background: #e6e6e6">
+              <pdf ref="pdf"
+                  :src="pdfUrl"
+                   :page="currentPage"
+                   @progress="loadedRatio = $event"
+                   @num-pages="totalPdfPage=$event"
+                   @page-loaded="pageLoaded($event)"
+                   @loaded="loadPdfHandler"
+                   @error="pdfError($event)">
+              </pdf>
             </div>
           </div>
         </div>
@@ -82,11 +67,12 @@
   import { baseMixin }  from "../base/baseMixin";
   import {uploadSinglePicture} from "../base/api";
   import pageFooter from "../components/footer/pageFooter";
+  import pdf from 'vue-pdf'
   // import testData from "../base/test.js";
 
   export default {
     name: "ocr",
-    components: {Icon, pageFooter},
+    components: {Icon, pageFooter, pdf},
     mixins: [baseMixin],
 
     data() {
@@ -101,11 +87,77 @@
         fileList: [],
         ocrResultList: [],
         selectedImageSrc: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-        selectedOcrResult: []
+        selectedOcrResult: [],
+        padLoading: true,
+        currentPage: 0, // pdf 文件页码
+        totalPdfPage: 0, // pdf 文件页码总数
+        pageCount: 0, // pdf 文件总页数
+        pdfUrl: '', // pdf文件地址
+        loadedRatio: 0, // 加载进度
       }
     },
 
+    created() {
+      let url =  "http://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf";
+      // 有时PDF文件地址会出现跨域的情况,这里最好处理一下
+      this.pdfUrl = pdf.createLoadingTask(url);
+      console.log("created pdfSrc", this.pdfUrl);
+    },
+
     methods: {
+
+      // 上一页函数，
+      prePage() {
+        let page = this.currentPage
+        page = page > 1 ? page - 1 : this.totalPdfPage
+        this.currentPage = page
+      },
+
+      // 下一页函数
+      nextPage() {
+        let page = this.currentPage
+        page = page < this.totalPdfPage ? page + 1 : 1
+        this.currentPage = page
+      },
+
+      // 页面加载回调函数，其中e为当前页数
+      pageLoaded(e) {
+        console.log("pageLoaded", e)
+        this.currentPage = e;
+        // this.$refs.pdf.pdf.forEachPage(page => {
+        //   console.log("page::", page);
+        // })
+      },
+
+      // 其他的一些回调函数。
+      pdfError(error) {
+        console.error(error)
+      },
+
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
+
+      // 改变PDF页码,val传过来区分上一页下一页的值,0上一页,1下一页
+      changePdfPage (val) {
+        // console.log(val)
+        if (val === 0 && this.currentPage > 1) {
+          this.currentPage--
+          // console.log(this.currentPage)
+        }
+        if (val === 1 && this.currentPage < this.totalPdfPage) {
+          this.currentPage++
+          // console.log(this.currentPage)
+        }
+      },
+
+      // pdf加载时
+      loadPdfHandler(e) {
+        console.log("pdf加载时", e);
+        this.padLoading = false;
+        // 加载的时候先加载第一页
+        this.currentPage = 1;
+      },
 
       transferImag2Base64(file) {
         return new Promise((resolve, reject) => {

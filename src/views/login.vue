@@ -33,6 +33,7 @@
                     prefix-icon = "el-icon-lock"
                     placeholder="请输入密码"
                     show-password
+                    @keyup.enter.native="handlePasswordLogin"
                 ></el-input>
               </el-form-item>
               <el-form-item label="" style="width: 100%">
@@ -158,7 +159,7 @@ export default {
       redirect_uri: encodeURI("https://www.performercn.com/login"),
       // 账号密码登录参数
       loginForm: {
-        username: "🐺",
+        username: "",
         password: "",
       },
       // 注册参数

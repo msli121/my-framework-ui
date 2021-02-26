@@ -31,11 +31,7 @@
         <span class="el-dropdown-link">{{ userProfile.username }}<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item icon="el-icon-user-solid" command="user_center">
-            <router-link to="/home/account" style="text-decoration:none;color: #606266">个人中心</router-link>
-          </el-dropdown-item>
-<!--          <el-dropdown-item icon="el-icon-tickets" command="buy_record">购买记录</el-dropdown-item>-->
-<!--          <el-dropdown-item icon="el-icon-medal" command="vip_center">会员中心</el-dropdown-item>-->
+          <el-dropdown-item icon="el-icon-user-solid" command="userCenter">个人中心</el-dropdown-item>
           <el-dropdown-item v-if="userProfile.username === 'admin'" icon="el-icon-s-tools" command="adminConfig">后台管理</el-dropdown-item>
           <el-dropdown-item icon="el-icon-switch-button" command="logout">退出登录</el-dropdown-item>
         </el-dropdown-menu>
@@ -103,12 +99,9 @@ export default {
             console.log("logout error", e);
             this.$message.error("服务器异常");
           });
-      } else if (command === "user_center") {
-        // this.$message.success("暂无实现");
-      } else if (command === "buy_record") {
-        this.$message.success("暂无实现");
-      } else if (command === "vip_center") {
-        this.$message.success("暂无实现");
+      } else if (command === "userCenter") {
+        console.log("userCenter", command)
+        this.$router.push({ path: "/home/account" });
       } else if (command === "adminConfig") {
         console.log("adminConfig" ,command)
         this.$router.push({ path: "/admin" });
