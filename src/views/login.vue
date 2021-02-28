@@ -202,6 +202,7 @@ export default {
       if(this.$route.query.state) {
         params.state = this.$route.query.state;
       }
+      // console.log("开始调用微信登录接口！！！", params);
       this.getUserProfile(params);
     }
 

@@ -1,3 +1,45 @@
+const toBase64 = [
+  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+  'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+  'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+  'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'
+];
+export function uint8ClampedArrayToBase64(src) {
+  let dstLen = Math.ceil(src.length * 4 / 3);
+  let dst = new Array(dstLen);
+  let pos = 0;
+  let dstIndex = 0;
+  let nextLeft = 0;
+  src.forEach( b => {
+    let r = 0;
+    if (pos === 0) {
+      r = b >> 2;
+      dst[dstIndex++] = toBase64[nextLeft + r];
+      nextLeft = (b & 0x03) << 4;
+    } else if (pos === 1) {
+      r = b >> 4;
+      dst[dstIndex++] = toBase64[nextLeft + r];
+      nextLeft = (b & 0x0F) << 2;
+    } else if (pos === 2) {
+      r = b >> 6;
+      dst[dstIndex++] = toBase64[nextLeft + r];
+      dst[dstIndex++] = toBase64[b & 0x3F];
+      nextLeft = 0;
+    }
+
+    pos++;
+    if (pos === 3) {
+      pos = 0;
+    }
+  });
+  if (pos !== 0) {
+    dst[dstIndex] = toBase64[nextLeft];
+  }
+  return dst.join('');
+}
+
+
 
 export function getCurrentTime() {
   let yy = new Date().getFullYear();
@@ -42,4 +84,5 @@ export function checkIsPhone(contentStr) {
   // var isMob= /^0?1[0-9][0-9]\d{8}$/;
   return isPhone.test(contentStr);
 }
+
 

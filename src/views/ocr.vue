@@ -202,70 +202,79 @@ export default {
     },
 
     handlePictureChange(file, fileList) {
-      console.log("handlePictureChange", file, fileList);
-      this.fileList = fileList;
-      this.selectedImageSrc = file.url;
-      let that = this;
-      const isLt6M = file.size / 1024 / 1024 < 6;
-      const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
-      if(isLt6M && isAllowedType) {
-        this.transferImag2Base64(file.raw).then(res => {
-          console.log("base64 result ", res);
-          let requestBody = {
-            fileName: file.name,
-            fileSize: file.size,
-            fileType: file.raw.type,
-            fileContent: res,
-            sourceGroup: 'ocr',
-            uid: this.$store.state.userProfile.uid
-          };
-          that.showLoading = true;
-          uploadSinglePicture(requestBody).then(res => {
-            console.log("res",res);
-            if(res.flag === "T") {
-              that.$message.success("上传成功");
-              that.selectedOcrResult = res.data;
-              that.selectedOcrResult.recognitionContent = JSON.parse(res.data.recognitionContent);
-              that.ocrResultList.push(that.selectedOcrResult);
-              console.log("that.ocrResultList", that.ocrResultList);
-              console.log("that.selectedOcrResult", that.selectedOcrResult);
-            } else {
-              that.$message.error(res.msg);
+      if(!this.loginSuccess) {
+        this.$message.warning("请先登录");
+        fileList.forEach((item, index, arr) => {
+          if(item.uid === file.uid) {
+            arr.splice(index, 1);
+          }
+        });
+      } else {
+        this.fileList = fileList;
+        this.selectedImageSrc = file.url;
+        let that = this;
+        console.log("handlePictureChange", file, fileList);
+        const isLt6M = file.size / 1024 / 1024 < 6;
+        const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
+        if(isLt6M && isAllowedType) {
+          this.transferImag2Base64(file.raw).then(res => {
+            console.log("base64 result ", res);
+            let requestBody = {
+              fileName: file.name,
+              fileSize: file.size,
+              fileType: file.raw.type,
+              fileContent: res,
+              sourceGroup: 'ocr',
+              uid: this.$store.state.userProfile.uid
+            };
+            that.showLoading = true;
+            uploadSinglePicture(requestBody).then(res => {
+              console.log("res",res);
+              if(res.flag === "T") {
+                that.$message.success("上传成功");
+                that.selectedOcrResult = res.data;
+                that.selectedOcrResult.recognitionContent = JSON.parse(res.data.recognitionContent);
+                that.ocrResultList.push(that.selectedOcrResult);
+                console.log("that.ocrResultList", that.ocrResultList);
+                console.log("that.selectedOcrResult", that.selectedOcrResult);
+              } else {
+                that.$message.error(res.msg);
+                that.fileList.forEach((item, index, arr) => {
+                  if(item.uid === file.uid) {
+                    arr.splice(index, 1);
+                  }
+                });
+              }
+              that.showLoading = false;
+            }).catch(error => {
+              that.showLoading = false;
+              console.log("上传失败，请重试");
               that.fileList.forEach((item, index, arr) => {
                 if(item.uid === file.uid) {
                   arr.splice(index, 1);
                 }
               });
-            }
-            that.showLoading = false;
-          }).catch(error => {
-            that.showLoading = false;
-            console.log("上传失败，请重试");
+              that.$message.error("上传失败，请重试");
+              console.log(error);
+            })
+          }).catch(e => {
             that.fileList.forEach((item, index, arr) => {
               if(item.uid === file.uid) {
                 arr.splice(index, 1);
               }
             });
+            that.showLoading = false;
             that.$message.error("上传失败，请重试");
-            console.log(error);
+            console.log(e);
           })
-        }).catch(e => {
+        } else {
           that.fileList.forEach((item, index, arr) => {
             if(item.uid === file.uid) {
               arr.splice(index, 1);
             }
           });
-          that.showLoading = false;
-          that.$message.error("上传失败，请重试");
-          console.log(e);
-        })
-      } else {
-        that.fileList.forEach((item, index, arr) => {
-          if(item.uid === file.uid) {
-            arr.splice(index, 1);
-          }
-        });
-        this.$message.error('请选择正确格式图片，大小不能超过 2MB')
+          this.$message.error('请选择正确格式图片，大小不能超过 2MB')
+        }
       }
     },
 
@@ -449,7 +458,7 @@ export default {
   .show-container {
     width: 1260px;
     min-height: 600px;
-    text-align: center;
+    text-align: left;
     padding: 0px 20px 20px 20px;
     border: 1px solid #ebebeb;
     border-radius: 6px;
