@@ -97,14 +97,24 @@
                   <el-radio-button label="JSON返回"></el-radio-button>
                 </el-radio-group>
               </div>
-              <div class="pdf-result-content" v-loading="pdfResultLoading"
+              <div class="pdf-result-content"
+                   v-if="activeName === '识别结果'"
+                   v-loading="pdfResultLoading"
                    style="width: 100%; height: 560px;overflow:auto;background: #e6e6e6;">
-                <div v-if="activeName==='识别结果'">
+                <div>
                   <el-input type="text" size="small" style="display: block;"
                             v-for="(item, index) in pdfRecognitionSelected.data" :key="index"
                             v-model="item.text"></el-input>
                 </div>
-                <div v-show="activeName==='JSON返回'" ref="container" style="height: 100%;width: 100%;"></div>
+              </div>
+              <div v-if="activeName==='JSON返回'" style="width: 100%; height: 560px;background: #e6e6e6;">
+                <vue-json-editor
+                                 v-model="pdfRecognitionSelected"
+                                 :showBtns="false"
+                                 :mode="'code'"
+                                 lang="zh"
+                                 @json-save="onJsonSave"
+                ></vue-json-editor>
               </div>
             </div>
           </div>
@@ -123,19 +133,18 @@
   import pageFooter from "../components/footer/pageFooter";
   import pdf from 'vue-pdf'
   import apiBaseUrl from "../base/baseUrl";
-  import {recogniseUrlPdfFivePage} from "../base/api";
+  import {recogniseUrlPdfFivePage, recogniseUrlPdfFivePageWithoutLogin} from "../base/api";
   import {checkUrlIsPdf} from "../utils/commonFunction";
-  import * as monaco from 'monaco-editor'
+  import vueJsonEditor from 'vue-json-editor'
 
   export default {
     name: "pdfOcr",
-    components: {Icon, pageFooter, pdf},
+    components: {Icon, pageFooter, pdf, vueJsonEditor},
     mixins: [baseMixin],
 
     data() {
       return {
         activeName: "识别结果",
-        monacoEditor: {},
         showLoading: false,
         multiple: false,
         dialogVisible: false,
@@ -162,19 +171,31 @@
 
     mounted() {
       if (this.pdfFileUrl) {
+        let changedPdfFileUrl = this.pdfFileUrl + "";
+        if (changedPdfFileUrl.indexOf("http:") === 0) {
+          changedPdfFileUrl = "https:" + changedPdfFileUrl.substring(5, changedPdfFileUrl.length)
+        }
+        console.log("this.changedPdfFileUrl", changedPdfFileUrl);
         // 有时PDF文件地址会出现跨域的情况,这里最好处理一下
-        this.pdfUrl = pdf.createLoadingTask(this.pdfFileUrl);
+        this.pdfUrl = pdf.createLoadingTask(changedPdfFileUrl);
         // 调用接口
-        this.handleCheckPdfUrl();
+        recogniseUrlPdfFivePageWithoutLogin(this.pdfFileUrl).then(res => {
+          this.pdfResultLoading = false;
+          if (res.flag === 'T') {
+            console.log("识别成功", res);
+            // this.$message.success("识别成功");
+            this.pdfRecognitionResult = res.data;
+            this.pdfRecognitionSelected = this.pdfRecognitionResult[this.currentPage - 1];
+            console.log("pdfRecognitionSelected", this.pdfRecognitionSelected)
+          } else {
+            console.log("识别失败", res);
+            this.$message.warning(res.msg);
+          }
+        }).catch(err => {
+          this.pdfResultLoading = false;
+          console.log("识别失败", err);
+        })
       }
-      // 初始化编辑器，确保dom已经渲染，dialog中要写在opened中
-      this.monacoEditor = monaco.editor.create(this.$refs.container, {
-        value: '',
-        readOnly: true,
-        language: 'json',
-        theme: 'vs-dark'
-      });
-
     },
 
     computed: {
@@ -190,15 +211,11 @@
     },
 
     methods: {
-      changeEditor() {
-        // 更改editor内容
-        this.monacoEditor.setValue(this.pdfRecognitionSelected.data);
-        this.monacoEditor.getAction('editor.action.formatDocument')._run();
+      // json 保存
+      onJsonSave(value) {
+        console.log('value:', value);
       },
-      destroyEditor() {
-        // 销毁编辑器
-        this.monacoEditor.dispose();
-      },
+
       // pdf 初次加载完毕时
       loadPdfHandler() {
         // 加载的时候先加载第一页
@@ -292,8 +309,8 @@
       handleCheckPdfUrl() {
         if (checkUrlIsPdf(this.pdfFileUrl)) {
           let changedPdfFileUrl = this.pdfFileUrl + "";
-          if (changedPdfFileUrl.startsWith("http:")) {
-            changedPdfFileUrl.replace("http:", "https:");
+          if (changedPdfFileUrl.indexOf("http:") === 0) {
+            changedPdfFileUrl = "https:" + changedPdfFileUrl.substring(5, changedPdfFileUrl.length)
           }
           console.log("this.changedPdfFileUrl", changedPdfFileUrl);
           // pdf 内容显示
@@ -458,4 +475,10 @@
     margin: 0;
   }
 
+  /deep/.jsoneditor-poweredBy{
+    display: none;
+  }
+  /deep/.jsoneditor-vue{
+    height:560px;
+  }
 </style>

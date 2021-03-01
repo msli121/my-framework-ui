@@ -117,11 +117,14 @@ export function editAndSaveOcrResult(data) {
 /**
  * PDF API
  */
-// 上传pdf文件url,获取前五页识别结果
+// 上传pdf文件url,获取前五页识别结果 (需要登录)
 export function recogniseUrlPdfFivePage(data) {
   return post("/pdf/recognition/five-page-url", data)
 }
-
+// 上传pdf文件url,获取前五页识别结果 (无需登录)
+export function recogniseUrlPdfFivePageWithoutLogin(data) {
+  return post("/pdf/recognition/five-page-url/direct", data)
+}
 /**
  * file API
  */
