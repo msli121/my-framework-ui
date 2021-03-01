@@ -13,6 +13,7 @@
     "element-ui": "^2.14.1",
     "less": "^4.1.0",
     "less-loader": "^7.2.1",
+    "monaco-editor": "^0.22.3",
     "qs": "^6.9.6",
     "vue": "^2.6.11",
     "vue-axios": "^3.2.2",

@@ -198,10 +198,11 @@ export default {
     },
 
     handlePictureBeforeUpload(file) {
-      console.log("file", file)
+      console.log("handlePictureBeforeUpload", file)
     },
 
     handlePictureChange(file, fileList) {
+      console.log("handlePictureChange", file);
       if(!this.loginSuccess) {
         this.$message.warning("请先登录");
         fileList.forEach((item, index, arr) => {
@@ -215,7 +216,8 @@ export default {
         let that = this;
         console.log("handlePictureChange", file, fileList);
         const isLt6M = file.size / 1024 / 1024 < 6;
-        const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
+        // const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
+        const isAllowedType = true;
         if(isLt6M && isAllowedType) {
           this.transferImag2Base64(file.raw).then(res => {
             console.log("base64 result ", res);
@@ -273,7 +275,7 @@ export default {
               arr.splice(index, 1);
             }
           });
-          this.$message.error('请选择正确格式图片，大小不能超过 2MB')
+          this.$message.error('请选择正确格式图片，大小不能超过 6MB')
         }
       }
     },
@@ -458,7 +460,7 @@ export default {
   .show-container {
     width: 1260px;
     min-height: 600px;
-    text-align: left;
+    text-align: center;
     padding: 0px 20px 20px 20px;
     border: 1px solid #ebebeb;
     border-radius: 6px;

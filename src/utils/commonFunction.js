@@ -1,3 +1,5 @@
+import {isEmpty} from "../base/api";
+
 const toBase64 = [
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
   'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
@@ -85,4 +87,17 @@ export function checkIsPhone(contentStr) {
   return isPhone.test(contentStr);
 }
 
+export function checkUrlIsPdf(url) {
+  if(isEmpty(url)) {
+    return false;
+  } else {
+    let endStr = '.pdf';
+    let leftLen = url.length - endStr.length;
+    if (leftLen >= 0 && url.lastIndexOf(endStr) === leftLen) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
 

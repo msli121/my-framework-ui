@@ -115,6 +115,14 @@ export function editAndSaveOcrResult(data) {
 }
 
 /**
+ * PDF API
+ */
+// 上传pdf文件url,获取前五页识别结果
+export function recogniseUrlPdfFivePage(data) {
+  return post("/pdf/recognition/five-page-url", data)
+}
+
+/**
  * file API
  */
 // 获取当前登录用户所有的文件

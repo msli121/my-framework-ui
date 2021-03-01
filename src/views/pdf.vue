@@ -30,22 +30,23 @@
                 <el-input placeholder="请输入PDF URL查看效果" v-model="pdfFileUrl"></el-input>
               </el-col>
               <el-col :span="2">
-                <el-button type="primary" icon="el-icon-full-screen">检测</el-button>
+                <el-button type="primary" icon="el-icon-full-screen" @click="handleCheckPdfUrl">检测</el-button>
               </el-col>
               <el-col :span="2">
                 <el-upload
                     ref="upload"
                     :action="pdfApiUrl"
                     :data="{uid: userProfile.uid}"
-                    :before-upload="handlePdfBeforeUpload"
                     :on-success="handlePdfUploadSuccess"
                     :on-error="handlePdfUploadError"
+                    :before-upload="handlePdfBeforeUpload"
+                    :on-change="handlePictureChange"
                     :limit="1"
+                    list-type="picture"
                     :show-file-list="false"
-                    :auto-upload="true"
-                    :with-credentials="true"
-                >
-                  <el-button type="primary" icon="el-icon-upload">上传</el-button>
+                    :auto-upload="false"
+                    :with-credentials="true">
+                  <el-button slot="default" type="primary" icon="el-icon-upload">上传</el-button>
                 </el-upload>
               </el-col>
             </el-row>
@@ -65,6 +66,7 @@
                     small
                     :pager-count="5"
                     background
+                    @current-change="handleCurrentChange"
                     :current-page.sync="currentPage"
                     layout="total, prev, pager, next, jumper"
                     :total="totalPdfPage > 5 ? 5 : totalPdfPage">
@@ -87,8 +89,9 @@
               </div>
             </div>
             <div class="pdf-result-box"
-                 style="width: 600px; height: 600px;border: 1px solid #dedede;border-radius: 3px;padding: 8px 0 0;">
-              <div class="pdf-result-tools" style="border-bottom: 2px solid rgb(235, 235, 235);padding: 0px 0px 8px 8px;">
+                 style="width: 600px; height: 600px;border: 1.8px solid #dedede;border-radius: 3px;padding: 8px 0 0 0;">
+              <div class="pdf-result-tools"
+                   style="border-bottom: 2px solid rgb(235, 235, 235);padding: 0 0 8px 8px;">
                 <el-radio-group v-model="activeName" size="mini">
                   <el-radio-button label="识别结果"></el-radio-button>
                   <el-radio-button label="JSON返回"></el-radio-button>
@@ -96,13 +99,15 @@
               </div>
               <div class="pdf-result-content" v-loading="pdfResultLoading"
                    style="width: 100%; height: 560px;overflow:auto;background: #e6e6e6;">
-                <div>
-                   <el-input type="text" size="small" style="display: block;" v-for="(item, index) in pdfRecognitionSelected.data" :key="index" v-model="item.text"></el-input>
+                <div v-if="activeName==='识别结果'">
+                  <el-input type="text" size="small" style="display: block;"
+                            v-for="(item, index) in pdfRecognitionSelected.data" :key="index"
+                            v-model="item.text"></el-input>
                 </div>
+                <div v-show="activeName==='JSON返回'" ref="container" style="height: 100%;width: 100%;"></div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -113,281 +118,344 @@
 </template>
 
 <script>
-import Icon from 'vue-svg-icon/Icon'
-import {baseMixin} from "../base/baseMixin";
-import pageFooter from "../components/footer/pageFooter";
-import pdf from 'vue-pdf'
-import apiBaseUrl from "../base/baseUrl";
-// import testData from "../base/test.js";
+  import Icon from 'vue-svg-icon/Icon'
+  import {baseMixin} from "../base/baseMixin";
+  import pageFooter from "../components/footer/pageFooter";
+  import pdf from 'vue-pdf'
+  import apiBaseUrl from "../base/baseUrl";
+  import {recogniseUrlPdfFivePage} from "../base/api";
+  import {checkUrlIsPdf} from "../utils/commonFunction";
+  import * as monaco from 'monaco-editor'
 
-export default {
-  name: "pdfOcr",
-  components: {Icon, pageFooter, pdf},
-  mixins: [baseMixin],
+  export default {
+    name: "pdfOcr",
+    components: {Icon, pageFooter, pdf},
+    mixins: [baseMixin],
 
-  data() {
-    return {
-      activeName: "识别结果",
-      showLoading: false,
-      multiple: false,
-      dialogVisible: false,
-      disabled: false,
-      dialogImageUrl: '',
-      limit: 5,
-      fileList: [],
-      ocrResultList: [],
-      selectedImageSrc: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-      pdfLoading: true,
-      pdfResultLoading: false,
-      currentPage: 1, // pdf 文件页码
-      totalPdfPage: 0, // pdf 文件页码总数
-      pageCount: 0, // pdf 文件总页数
-      pdfUrl: '', // pdf文件地址
-      pdfFileUrl: "", // 用户输入的 pdf url
-      loadedRatio: 0, // 加载进度
-      pdfApiUrl: "", // 后端 pdf 访问接口
-      pdfRecognitionResult: [], // 初始识别结果
-      pdfRecognitionSelected: {
-        data: [],
-      }, // 选中页的识别结果
-    }
-  },
-
-  created() {
-    // 设置 pdf api url
-    this.pdfApiUrl = apiBaseUrl + "/pdf/pdf-upload";
-
-    let url = "https://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf";
-    // 有时PDF文件地址会出现跨域的情况,这里最好处理一下
-    this.pdfUrl = pdf.createLoadingTask(url);
-    // pdfUrl.promise.then(pdf => {
-    //   this.totalPdfPage = pdf.numPages;
-    //   this.pdfUrl = pdfUrl
-    // })
-  },
-
-
-  watch: {
-    pdfUrl: function (loadingTask) {
-      // let loadingTask = pdf.createLoadingTask(val);
-      // let totalPdfPage = 0;
-      let that = this;
-      loadingTask.promise.then(pdf => {
-        that.totalPdfPage = pdf.numPages;
-        console.log("watch totalPdfPage", that.totalPdfPage);
-      })
-    }
-  },
-
-  computed: {
-
-    loginSuccess() {
-      return this.$store.state.loginSuccess;
-    },
-
-    userProfile() {
-      return this.$store.state.userProfile;
-    },
-
-  },
-
-  methods: {
-
-    // pdf 初次加载完毕时
-    loadPdfHandler() {
-      // 加载的时候先加载第一页
-      this.currentPage = 1;
-      console.log("pdf 初始加载完毕 ");
-      this.pdfLoading = false;
-    },
-
-    // 页面加载回调函数，其中 pageNum 为当前页数
-    pageLoaded(pageNum) {
-      this.pdfLoading = false;
-      console.log("pageLoaded", pageNum);
-      if(this.pdfRecognitionResult[pageNum - 1]) {
-        this.pdfRecognitionSelected = this.pdfRecognitionResult[pageNum - 1];
+    data() {
+      return {
+        activeName: "识别结果",
+        monacoEditor: {},
+        showLoading: false,
+        multiple: false,
+        dialogVisible: false,
+        disabled: false,
+        dialogImageUrl: '',
+        limit: 5,
+        fileList: [],
+        ocrResultList: [],
+        selectedImageSrc: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+        pdfLoading: true,
+        pdfResultLoading: true,
+        currentPage: 1, // pdf 文件页码
+        totalPdfPage: 0, // pdf 文件页码总数
+        pageCount: 0, // pdf 文件总页数
+        pdfUrl: '', //  pdf 显示文件地址
+        pdfFileUrl: "http://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf", // 用户输入的 pdf url
+        localPdfUrl: "", // 本地上传 pdf 文件 url
+        loadedRatio: 0, // 加载进度
+        pdfApiUrl: apiBaseUrl + "/pdf/recognition/five-page", // 后端 pdf 访问接口
+        pdfRecognitionResult: [], // 初始识别结果
+        pdfRecognitionSelected: {}, // 选中页的识别结果
       }
     },
 
-    // 其他的一些回调函数。
-    pdfError(error) {
-      console.error(error)
+    mounted() {
+      if (this.pdfFileUrl) {
+        // 有时PDF文件地址会出现跨域的情况,这里最好处理一下
+        this.pdfUrl = pdf.createLoadingTask(this.pdfFileUrl);
+        // 调用接口
+        this.handleCheckPdfUrl();
+      }
+      // 初始化编辑器，确保dom已经渲染，dialog中要写在opened中
+      this.monacoEditor = monaco.editor.create(this.$refs.container, {
+        value: '',
+        readOnly: true,
+        language: 'json',
+        theme: 'vs-dark'
+      });
+
     },
 
-    // pdf 文件上传前的回调
-    handlePdfBeforeUpload(file) {
-      console.log("handlePdfBeforeUpload", file);
-      if(!this.loginSuccess) {
-        this.$message.warning("请先登录");
-        return false;
-      }
-      else {
-        this.pdfUrl = pdf.createLoadingTask(file.url);
-        const isLt10M = file.size / 1024 / 1024 < 10;
-        const isAllowedType = file.type === 'application/pdf';
-        if(isLt10M && isAllowedType) {
-          console.log("pdf 文件校验通过")
-          return true;
-        } else {
-          this.$message.warning('请PDF格式文件，大小不能超过 10MB')
-          return false;
+    computed: {
+
+      loginSuccess() {
+        return this.$store.state.loginSuccess;
+      },
+
+      userProfile() {
+        return this.$store.state.userProfile;
+      },
+
+    },
+
+    methods: {
+      changeEditor() {
+        // 更改editor内容
+        this.monacoEditor.setValue(this.pdfRecognitionSelected.data);
+        this.monacoEditor.getAction('editor.action.formatDocument')._run();
+      },
+      destroyEditor() {
+        // 销毁编辑器
+        this.monacoEditor.dispose();
+      },
+      // pdf 初次加载完毕时
+      loadPdfHandler() {
+        // 加载的时候先加载第一页
+        this.currentPage = 1;
+        console.log("pdf 初始加载完毕 ");
+        this.pdfLoading = false;
+      },
+
+      // 页面加载回调函数，其中 pageNum 为当前页数
+      pageLoaded(pageNum) {
+        this.pdfLoading = false;
+        console.log("pageLoaded", pageNum);
+        if (this.pdfRecognitionResult[pageNum - 1]) {
+          this.pdfRecognitionSelected = this.pdfRecognitionResult[pageNum - 1];
         }
+      },
+
+      // 其他的一些回调函数。
+      pdfError(error) {
+        console.error(error)
+      },
+
+      // pdf 文件上传前的回调
+      handlePdfBeforeUpload(file) {
+        console.log("handlePdfBeforeUpload", file);
+      },
+
+      // pdf 变动时回调
+      handlePictureChange(file, fileList) {
+        console.log("handlePictureChange", file, fileList);
+        if (!this.loginSuccess) {
+          this.$message.warning("请先登录");
+        } else {
+          if (file.url && file.url !== this.localPdfUrl) {
+            this.localPdfUrl = file.url;
+            console.log("file.url", file.url);
+            this.pdfUrl = pdf.createLoadingTask(file.url);
+            const isLt10M = file.raw.size / 1024 / 1024 < 10;
+            const isAllowedType = file.raw.type === 'application/pdf';
+            if (isLt10M && isAllowedType) {
+              console.log("pdf 文件校验通过")
+              // 手动上传文件
+              this.pdfResultLoading = true;
+              this.$refs.upload.submit();
+            } else {
+              this.$message.warning('请PDF格式文件，大小不能超过 10MB')
+            }
+          } else {
+            // do noting
+          }
+        }
+      },
+
+      // 文件上传成功
+      handlePdfUploadSuccess(res) {
+        this.pdfResultLoading = false;
+        if (res.flag === 'T') {
+          console.log("识别成功", res);
+          this.$message.success("识别成功");
+          this.pdfRecognitionResult = res.data;
+          this.pdfRecognitionSelected = this.pdfRecognitionResult[this.currentPage - 1];
+          console.log("pdfRecognitionSelected", this.pdfRecognitionSelected)
+        } else {
+          console.log("识别失败", res);
+          this.$message.warning(res.msg);
+        }
+        this.$refs.upload.clearFiles();
+      },
+
+      // 文件上传失败
+      handlePdfUploadError(err) {
+        this.pdfResultLoading = false;
+        this.localPdfUrl = "";
+        console.log("识别失败", err);
+        this.$refs.upload.clearFiles();
+      },
+
+      handleClick(tab, event) {
+        console.log(tab, event);
+      },
+
+      handleCurrentChange(val) {
+        console.log("当前页:", val);
+        if(val <= 5) {
+          this.pdfRecognitionSelected = this.pdfRecognitionResult[val - 1];
+        } else {
+          this.$message.warning("最多查看前5页")
+        }
+      },
+
+      handleCheckPdfUrl() {
+        if (checkUrlIsPdf(this.pdfFileUrl)) {
+          let changedPdfFileUrl = this.pdfFileUrl + "";
+          if (changedPdfFileUrl.startsWith("http:")) {
+            changedPdfFileUrl.replace("http:", "https:");
+          }
+          console.log("this.changedPdfFileUrl", changedPdfFileUrl);
+          // pdf 内容显示
+          this.pdfLoading = true;
+          this.pdfUrl = pdf.createLoadingTask(changedPdfFileUrl);
+          // 调用后端识别接口
+          this.pdfResultLoading = true;
+          let requestBody = {
+            uid: this.userProfile.uid,
+            pdfUrl: this.pdfFileUrl
+          };
+          recogniseUrlPdfFivePage(requestBody).then(res => {
+            this.pdfResultLoading = false;
+            if (res.flag === 'T') {
+              console.log("识别成功", res);
+              this.$message.success("识别成功");
+              this.pdfRecognitionResult = res.data;
+              this.pdfRecognitionSelected = this.pdfRecognitionResult[this.currentPage - 1];
+              console.log("pdfRecognitionSelected", this.pdfRecognitionSelected)
+            } else {
+              console.log("识别失败", res);
+              this.$message.warning(res.msg);
+            }
+          }).catch(err => {
+            this.pdfResultLoading = false;
+            console.log("识别失败", err);
+          })
+        } else {
+          this.$message.warning("PDF文件链接格式错误");
+        }
+
       }
-    },
 
-    handlePdfUploadSuccess(res) {
-      if(res.flag === 'T') {
-        console.log("识别成功", res);
-        this.$message.success("识别成功");
-        this.pdfRecognitionResult = res.data;
-        this.pdfRecognitionSelected = this.pdfRecognitionResult[this.currentPage - 1];
-        console.log("pdfRecognitionSelected", this.pdfRecognitionSelected)
-      } else {
-        console.log("识别失败", res);
-        this.$message.warning(res.msg);
-      }
-      this.$refs.upload.clearFiles();
-    },
-
-    handlePdfUploadError(err) {
-      console.log("识别失败", err);
-      this.$refs.upload.clearFiles();
-    },
-
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
-
+    }
   }
-}
 </script>
 
 <style scoped lang="less">
-.ocr-banner {
-  box-sizing: border-box;
-  position: relative;
-  height: 450px;
-  background: url("../assets/images/pdf-background.jpg") no-repeat 50% 50%;
-  background-size: cover;
-  overflow: hidden;
-}
+  .ocr-banner {
+    box-sizing: border-box;
+    position: relative;
+    height: 450px;
+    background: url("../assets/images/pdf-background.jpg") no-repeat 50% 50%;
+    background-size: cover;
+    overflow: hidden;
+  }
 
-.ocr-banner-content {
-  overflow: hidden;
-  text-align: left;
-  width: 730px;
-  padding-right: 450px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-  z-index: 1;
-}
+  .ocr-banner-content {
+    overflow: hidden;
+    text-align: left;
+    width: 730px;
+    padding-right: 450px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
 
-.ocr-banner-title {
-  height: 67px;
-  font-size: 48px;
-  letter-spacing: 2px;
-  color: #fff;
-  position: relative;
-}
+  .ocr-banner-title {
+    height: 67px;
+    font-size: 48px;
+    letter-spacing: 2px;
+    color: #fff;
+    position: relative;
+  }
 
-.ocr-banner-info {
-  margin: 20px 110px 0 0;
-  font-size: 16px;
-  line-height: 26px;
-  color: #fff;
-  /*color: #faad15;*/
-}
+  .ocr-banner-info {
+    margin: 20px 110px 0 0;
+    font-size: 16px;
+    line-height: 26px;
+    color: #fff;
+    /*color: #faad15;*/
+  }
 
-.body-container {
-  background-color: #ffff;
-  width: 100%;
-}
+  .body-container {
+    background-color: #ffff;
+    width: 100%;
+  }
 
-.function-list-bg {
-  background-image: url("../assets/images/production-list-bg.jpg");
-  background-size: 100%;
-  background-color: #edeeef;
-  /*height: 540px;*/
-  padding: 30px 0 60px 0;
-}
+  .function-list-bg {
+    background-image: url("../assets/images/production-list-bg.jpg");
+    background-size: 100%;
+    background-color: #edeeef;
+    /*height: 540px;*/
+    padding: 30px 0 60px 0;
+  }
 
-.function-container {
-  width: 1300px;
-  margin: 0 auto;
-}
+  .function-container {
+    width: 1300px;
+    margin: 0 auto;
+  }
 
-.function-container > h2 {
-  font-size: 28px;
-  color: #333333;
-  text-align: center;
-  font-weight: bold;
-  line-height: 1.5;
-}
+  .function-container > h2 {
+    font-size: 28px;
+    color: #333333;
+    text-align: center;
+    font-weight: bold;
+    line-height: 1.5;
+  }
 
-.function-list-body {
-  max-width: 100%;
-  display: flex;
-  margin: 60px auto 0;
-  justify-content: space-between;
-}
+  .function-list-body {
+    max-width: 100%;
+    display: flex;
+    margin: 60px auto 0;
+    justify-content: space-between;
+  }
 
-.function-item-container {
-  display: flex;
-  justify-content: left;
-}
+  .function-item-container {
+    display: flex;
+    justify-content: left;
+  }
 
-.function-item-content {
-  text-align: left;
-  margin-right: 10px;
-}
+  .function-item-content {
+    text-align: left;
+    margin-right: 10px;
+  }
 
-.function-item-content > h3 {
-  display: inline-block;
-  height: 64px;
-  line-height: 64px;
-  margin: 0;
-}
+  .function-item-content > h3 {
+    display: inline-block;
+    height: 64px;
+    line-height: 64px;
+    margin: 0;
+  }
 
-.function-item-content > p {
-  margin: 0;
-  height: 42px;
-  font-size: 14px;
-  color: #666666;
-  line-height: 1.5;
-}
+  .function-item-content > p {
+    margin: 0;
+    height: 42px;
+    font-size: 14px;
+    color: #666666;
+    line-height: 1.5;
+  }
 
-.demo-show-container {
-  width: 1300px;
-  margin: 0 auto;
-  min-height: 900px;
-}
+  .demo-show-container {
+    width: 1300px;
+    margin: 0 auto;
+    min-height: 900px;
+  }
 
-.demo-show-container > h2 {
-  font-size: 28px;
-  color: #333333;
-  text-align: center;
-  font-weight: bold;
-  line-height: 1.5;
-}
+  .demo-show-container > h2 {
+    font-size: 28px;
+    color: #333333;
+    text-align: center;
+    font-weight: bold;
+    line-height: 1.5;
+  }
 
-.show-container {
-  width: 1260px;
-  min-height: 600px;
-  text-align: left;
-  padding: 0 20px 20px 20px;
-  border: 1px dashed #f68084;
-  border-radius: 6px;
-}
+  .show-container {
+    width: 1260px;
+    min-height: 600px;
+    text-align: left;
+    padding: 0 20px 20px 20px;
+    border: 1px dashed #f68084;
+    border-radius: 6px;
+  }
 
-.show-container > h3 {
-  height: 64px;
-  line-height: 64px;
-  text-align: center;
-  margin: 0;
-}
+  .show-container > h3 {
+    height: 64px;
+    line-height: 64px;
+    text-align: center;
+    margin: 0;
+  }
 
 </style>
