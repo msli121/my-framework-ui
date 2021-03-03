@@ -88,34 +88,44 @@
                 </pdf>
               </div>
             </div>
-            <div class="pdf-result-box"
-                 style="width: 600px; height: 600px;border: 1.8px solid #dedede;border-radius: 3px;padding: 8px 0 0 0;">
-              <div class="pdf-result-tools"
-                   style="border-bottom: 2px solid rgb(235, 235, 235);padding: 0 0 8px 8px;">
-                <el-radio-group v-model="activeName" size="mini">
-                  <el-radio-button label="识别结果"></el-radio-button>
-                  <el-radio-button label="JSON返回"></el-radio-button>
-                </el-radio-group>
-              </div>
-              <div class="pdf-result-content"
-                   v-if="activeName === '识别结果'"
-                   v-loading="pdfResultLoading"
-                   style="width: 100%; height: 560px;overflow:auto;background: #e6e6e6;">
-                <div>
-                  <el-input type="text" size="small" style="display: block;"
-                            v-for="(item, index) in pdfRecognitionSelected.data" :key="index"
-                            v-model="item.text"></el-input>
-                </div>
-              </div>
-              <div v-if="activeName==='JSON返回'" style="width: 100%; height: 560px;background: #e6e6e6;">
-                <vue-json-editor
-                                 v-model="pdfRecognitionSelected"
-                                 :showBtns="false"
-                                 :mode="'code'"
-                                 lang="zh"
-                                 @json-save="onJsonSave"
-                ></vue-json-editor>
-              </div>
+            <div class="pdf-result-box" style="width: 640px; height: 600px;padding: 0;position: relative;">
+              <el-button type="primary" size="small" plain @click="handlePdfEditSave"
+                         style="position: absolute; right: 20px; top: 10px; z-index: 5">修改保存</el-button>
+              <el-tabs type="border-card" v-model="activeName">
+                <el-tab-pane label="识别结果" name="result">
+                  <div style="width: 100%; height: 545px;background: #e6e6e6;overflow-y: auto; overflow-x: auto; position: relative;"
+                       v-loading="pdfResultLoading">
+                    <el-input v-for="(item, index) in pdfRecognitionSelected.data" :key="index"
+                              :style="'display: inline-block; ' + 'position: absolute; ' +
+                            'width: ' + (item.text_box_position[1][0] - item.text_box_position[0][0]) + 'px;' +
+                            'left:' + (item.text_box_position[0][0]) + 'px;' +
+                            'top:' + (item.text_box_position[0][1]) + 'px;' "
+                              size="mini"
+                              v-model="item.text">
+                    </el-input>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="文本列表" name="list">
+                  <div class="pdf-result-content" v-loading="pdfResultLoading"
+                       style="width: 100%; height: 545px;overflow:auto;background: #e6e6e6;">
+                    <el-input type="text" size="small" style="display: block;"
+                              v-for="(item, index) in pdfRecognitionSelected.data" :key="index"
+                              v-model="item.text">
+                    </el-input>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="JSON返回" name="json">
+                  <div style="width: 100%; height: 545px;background: #e6e6e6;">
+                    <vue-json-editor
+                        v-model="pdfRecognitionSelected"
+                        :showBtns="true"
+                        :mode="'code'"
+                        lang="zh"
+                        @json-save="onJsonSave"
+                    ></vue-json-editor>
+                  </div>
+                </el-tab-pane>
+              </el-tabs>
             </div>
           </div>
         </div>
@@ -144,7 +154,7 @@
 
     data() {
       return {
-        activeName: "识别结果",
+        activeName: "result",
         showLoading: false,
         multiple: false,
         dialogVisible: false,
@@ -299,7 +309,7 @@
 
       handleCurrentChange(val) {
         console.log("当前页:", val);
-        if(val <= 5) {
+        if (val <= 5) {
           this.pdfRecognitionSelected = this.pdfRecognitionResult[val - 1];
         } else {
           this.$message.warning("最多查看前5页")
@@ -341,6 +351,9 @@
         } else {
           this.$message.warning("PDF文件链接格式错误");
         }
+      },
+
+      handlePdfEditSave() {
 
       }
 
@@ -475,10 +488,17 @@
     margin: 0;
   }
 
-  /deep/.jsoneditor-poweredBy{
+  /deep/ .el-tabs__nav {
+    position: unset;
+  }
+  /deep/ .el-tabs--border-card>.el-tabs__content {
+    padding: 8px;
+  }
+  /deep/ .jsoneditor-poweredBy {
     display: none;
   }
-  /deep/.jsoneditor-vue{
-    height:560px;
+
+  /deep/ .jsoneditor-vue {
+    height: 545px;
   }
 </style>
