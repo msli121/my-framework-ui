@@ -216,8 +216,8 @@ export default {
         let that = this;
         console.log("handlePictureChange", file, fileList);
         const isLt6M = file.size / 1024 / 1024 < 6;
-        // const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
-        const isAllowedType = true;
+        const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
+        // const isAllowedType = true;
         if(isLt6M && isAllowedType) {
           this.transferImag2Base64(file.raw).then(res => {
             console.log("base64 result ", res);

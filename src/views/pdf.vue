@@ -89,7 +89,7 @@
               </div>
             </div>
             <div class="pdf-result-box" style="width: 640px; height: 600px;padding: 0;position: relative;">
-              <el-button type="primary" size="small" plain
+              <el-button type="primary" size="small" plain @click="handlePdfEditSave"
                          style="position: absolute; right: 20px; top: 10px; z-index: 5">修改保存</el-button>
               <el-tabs type="border-card" v-model="activeName">
                 <el-tab-pane label="识别结果" name="result">
@@ -97,9 +97,9 @@
                        v-loading="pdfResultLoading">
                     <el-input v-for="(item, index) in pdfRecognitionSelected.data" :key="index"
                               :style="'display: inline-block; ' + 'position: absolute; ' +
-                            'width: ' + (item.text_box_position[1][0] - item.text_box_position[0][0]) + 'px;' +
-                            'left:' + (item.text_box_position[0][0]) + 'px;' +
-                            'top:' + (item.text_box_position[0][1]) + 'px;' "
+                            'width: ' + getTextLength(item.text) + 'px;' +
+                            'left:' + (item.text_box_position[0][0])*0.4 + 'px;' +
+                            'top:' + (item.text_box_position[0][1])*0.4 + 'px;' "
                               size="mini"
                               v-model="item.text">
                     </el-input>
@@ -138,205 +138,62 @@
 </template>
 
 <script>
-import Icon from 'vue-svg-icon/Icon'
-import {baseMixin} from "../base/baseMixin";
-import pageFooter from "../components/footer/pageFooter";
-import pdf from 'vue-pdf'
-import apiBaseUrl from "../base/baseUrl";
-import {recogniseUrlPdfFivePage, recogniseUrlPdfFivePageWithoutLogin} from "../base/api";
-import {checkUrlIsPdf} from "../utils/commonFunction";
-import vueJsonEditor from 'vue-json-editor'
+  import Icon from 'vue-svg-icon/Icon'
+  import {baseMixin} from "../base/baseMixin";
+  import pageFooter from "../components/footer/pageFooter";
+  import pdf from 'vue-pdf'
+  import apiBaseUrl from "../base/baseUrl";
+  import {recogniseUrlPdfFivePage, recogniseUrlPdfFivePageWithoutLogin} from "../base/api";
+  import {checkUrlIsPdf} from "../utils/commonFunction";
+  import vueJsonEditor from 'vue-json-editor'
 
-export default {
-  name: "pdfOcr",
-  components: {Icon, pageFooter, pdf, vueJsonEditor},
-  mixins: [baseMixin],
+  export default {
+    name: "pdfOcr",
+    components: {Icon, pageFooter, pdf, vueJsonEditor},
+    mixins: [baseMixin],
 
-  data() {
-    return {
-      activeName: "result",
-      showLoading: false,
-      multiple: false,
-      dialogVisible: false,
-      disabled: false,
-      dialogImageUrl: '',
-      limit: 5,
-      fileList: [],
-      ocrResultList: [],
-      selectedImageSrc: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-      pdfLoading: true,
-      pdfResultLoading: true,
-      currentPage: 1, // pdf 文件页码
-      totalPdfPage: 0, // pdf 文件页码总数
-      pageCount: 0, // pdf 文件总页数
-      pdfUrl: '', //  pdf 显示文件地址
-      pdfFileUrl: "http://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf", // 用户输入的 pdf url
-      localPdfUrl: "", // 本地上传 pdf 文件 url
-      loadedRatio: 0, // 加载进度
-      pdfApiUrl: apiBaseUrl + "/pdf/recognition/five-page", // 后端 pdf 访问接口
-      pdfRecognitionResult: [], // 初始识别结果
-      pdfRecognitionSelected: {}, // 选中页的识别结果
-    }
-  },
-
-  mounted() {
-    if (this.pdfFileUrl) {
-      let changedPdfFileUrl = this.pdfFileUrl + "";
-      if (changedPdfFileUrl.indexOf("http:") === 0) {
-        changedPdfFileUrl = "https:" + changedPdfFileUrl.substring(5, changedPdfFileUrl.length)
-      }
-      console.log("this.changedPdfFileUrl", changedPdfFileUrl);
-      // 有时PDF文件地址会出现跨域的情况,这里最好处理一下
-      this.pdfUrl = pdf.createLoadingTask(changedPdfFileUrl);
-      // 调用接口
-      recogniseUrlPdfFivePageWithoutLogin(this.pdfFileUrl).then(res => {
-        this.pdfResultLoading = false;
-        if (res.flag === 'T') {
-          console.log("识别成功", res);
-          // this.$message.success("识别成功");
-          this.pdfRecognitionResult = res.data;
-          this.pdfRecognitionSelected = this.pdfRecognitionResult[this.currentPage - 1];
-          console.log("pdfRecognitionSelected", this.pdfRecognitionSelected)
-        } else {
-          console.log("识别失败", res);
-          this.$message.warning(res.msg);
-        }
-      }).catch(err => {
-        this.pdfResultLoading = false;
-        console.log("识别失败", err);
-      })
-    }
-  },
-
-  computed: {
-
-    loginSuccess() {
-      return this.$store.state.loginSuccess;
-    },
-
-    userProfile() {
-      return this.$store.state.userProfile;
-    },
-
-  },
-
-  methods: {
-    // json 保存
-    onJsonSave(value) {
-      console.log('value:', value);
-    },
-
-    // pdf 初次加载完毕时
-    loadPdfHandler() {
-      // 加载的时候先加载第一页
-      this.currentPage = 1;
-      console.log("pdf 初始加载完毕 ");
-      this.pdfLoading = false;
-    },
-
-    // 页面加载回调函数，其中 pageNum 为当前页数
-    pageLoaded(pageNum) {
-      this.pdfLoading = false;
-      console.log("pageLoaded", pageNum);
-      if (this.pdfRecognitionResult[pageNum - 1]) {
-        this.pdfRecognitionSelected = this.pdfRecognitionResult[pageNum - 1];
+    data() {
+      return {
+        activeName: "result",
+        showLoading: false,
+        multiple: false,
+        dialogVisible: false,
+        disabled: false,
+        dialogImageUrl: '',
+        limit: 5,
+        fileList: [],
+        ocrResultList: [],
+        selectedImageSrc: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+        pdfLoading: true,
+        pdfResultLoading: true,
+        currentPage: 1, // pdf 文件页码
+        totalPdfPage: 0, // pdf 文件页码总数
+        pageCount: 0, // pdf 文件总页数
+        pdfUrl: '', //  pdf 显示文件地址
+        pdfFileUrl: "http://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf", // 用户输入的 pdf url
+        localPdfUrl: "", // 本地上传 pdf 文件 url
+        loadedRatio: 0, // 加载进度
+        pdfApiUrl: apiBaseUrl + "/pdf/recognition/five-page", // 后端 pdf 访问接口
+        pdfRecognitionResult: [], // 初始识别结果
+        pdfRecognitionSelected: {}, // 选中页的识别结果
       }
     },
 
-    // 其他的一些回调函数。
-    pdfError(error) {
-      console.error(error)
-    },
-
-    // pdf 文件上传前的回调
-    handlePdfBeforeUpload(file) {
-      console.log("handlePdfBeforeUpload", file);
-    },
-
-    // pdf 变动时回调
-    handlePictureChange(file, fileList) {
-      console.log("handlePictureChange", file, fileList);
-      if (!this.loginSuccess) {
-        this.$message.warning("请先登录");
-      } else {
-        if (file.url && file.url !== this.localPdfUrl) {
-          this.localPdfUrl = file.url;
-          console.log("file.url", file.url);
-          this.pdfUrl = pdf.createLoadingTask(file.url);
-          const isLt10M = file.raw.size / 1024 / 1024 < 10;
-          const isAllowedType = file.raw.type === 'application/pdf';
-          if (isLt10M && isAllowedType) {
-            console.log("pdf 文件校验通过")
-            // 手动上传文件
-            this.pdfResultLoading = true;
-            this.$refs.upload.submit();
-          } else {
-            this.$message.warning('请PDF格式文件，大小不能超过 10MB')
-          }
-        } else {
-          // do noting
-        }
-      }
-    },
-
-    // 文件上传成功
-    handlePdfUploadSuccess(res) {
-      this.pdfResultLoading = false;
-      if (res.flag === 'T') {
-        console.log("识别成功", res);
-        this.$message.success("识别成功");
-        this.pdfRecognitionResult = res.data;
-        this.pdfRecognitionSelected = this.pdfRecognitionResult[this.currentPage - 1];
-        console.log("pdfRecognitionSelected", this.pdfRecognitionSelected)
-      } else {
-        console.log("识别失败", res);
-        this.$message.warning(res.msg);
-      }
-      this.$refs.upload.clearFiles();
-    },
-
-    // 文件上传失败
-    handlePdfUploadError(err) {
-      this.pdfResultLoading = false;
-      this.localPdfUrl = "";
-      console.log("识别失败", err);
-      this.$refs.upload.clearFiles();
-    },
-
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
-
-    handleCurrentChange(val) {
-      console.log("当前页:", val);
-      if (val <= 5) {
-        this.pdfRecognitionSelected = this.pdfRecognitionResult[val - 1];
-      } else {
-        this.$message.warning("最多查看前5页")
-      }
-    },
-
-    handleCheckPdfUrl() {
-      if (checkUrlIsPdf(this.pdfFileUrl)) {
+    mounted() {
+      if (this.pdfFileUrl) {
         let changedPdfFileUrl = this.pdfFileUrl + "";
         if (changedPdfFileUrl.indexOf("http:") === 0) {
           changedPdfFileUrl = "https:" + changedPdfFileUrl.substring(5, changedPdfFileUrl.length)
         }
         console.log("this.changedPdfFileUrl", changedPdfFileUrl);
-        // pdf 内容显示
-        this.pdfLoading = true;
+        // 有时PDF文件地址会出现跨域的情况,这里最好处理一下
         this.pdfUrl = pdf.createLoadingTask(changedPdfFileUrl);
-        // 调用后端识别接口
-        this.pdfResultLoading = true;
-        let requestBody = {
-          uid: this.userProfile.uid,
-          pdfUrl: this.pdfFileUrl
-        };
-        recogniseUrlPdfFivePage(requestBody).then(res => {
+        // 调用接口
+        recogniseUrlPdfFivePageWithoutLogin(this.pdfFileUrl).then(res => {
           this.pdfResultLoading = false;
           if (res.flag === 'T') {
             console.log("识别成功", res);
-            this.$message.success("识别成功");
+            // this.$message.success("识别成功");
             this.pdfRecognitionResult = res.data;
             this.pdfRecognitionSelected = this.pdfRecognitionResult[this.currentPage - 1];
             console.log("pdfRecognitionSelected", this.pdfRecognitionSelected)
@@ -348,153 +205,316 @@ export default {
           this.pdfResultLoading = false;
           console.log("识别失败", err);
         })
-      } else {
-        this.$message.warning("PDF文件链接格式错误");
       }
-    }
+    },
 
+    computed: {
+
+      loginSuccess() {
+        return this.$store.state.loginSuccess;
+      },
+
+      userProfile() {
+        return this.$store.state.userProfile;
+      },
+
+      getTextLength() {
+        return function (val) {
+          if(val === '' || val === null || val === undefined || val.length === 0) {
+            return 40
+          } else {
+            return  String(val).length * 13
+          }
+        }
+      }
+
+    },
+
+    methods: {
+      // json 保存
+      onJsonSave(value) {
+        console.log('value:', value);
+      },
+
+      // pdf 初次加载完毕时
+      loadPdfHandler() {
+        // 加载的时候先加载第一页
+        this.currentPage = 1;
+        console.log("pdf 初始加载完毕 ");
+        this.pdfLoading = false;
+      },
+
+      // 页面加载回调函数，其中 pageNum 为当前页数
+      pageLoaded(pageNum) {
+        this.pdfLoading = false;
+        console.log("pageLoaded", pageNum);
+        if (this.pdfRecognitionResult[pageNum - 1]) {
+          this.pdfRecognitionSelected = this.pdfRecognitionResult[pageNum - 1];
+        }
+      },
+
+      // 其他的一些回调函数。
+      pdfError(error) {
+        console.error(error)
+      },
+
+      // pdf 文件上传前的回调
+      handlePdfBeforeUpload(file) {
+        console.log("handlePdfBeforeUpload", file);
+      },
+
+      // pdf 变动时回调
+      handlePictureChange(file, fileList) {
+        console.log("handlePictureChange", file, fileList);
+        if (!this.loginSuccess) {
+          this.$message.warning("请先登录");
+        } else {
+          if (file.url && file.url !== this.localPdfUrl) {
+            this.localPdfUrl = file.url;
+            console.log("file.url", file.url);
+            this.pdfUrl = pdf.createLoadingTask(file.url);
+            const isLt10M = file.raw.size / 1024 / 1024 < 10;
+            const isAllowedType = file.raw.type === 'application/pdf';
+            if (isLt10M && isAllowedType) {
+              console.log("pdf 文件校验通过")
+              // 手动上传文件
+              this.pdfResultLoading = true;
+              this.$refs.upload.submit();
+            } else {
+              this.$message.warning('请PDF格式文件，大小不能超过 10MB')
+            }
+          } else {
+            // do noting
+          }
+        }
+      },
+
+      // 文件上传成功
+      handlePdfUploadSuccess(res) {
+        this.pdfResultLoading = false;
+        if (res.flag === 'T') {
+          console.log("识别成功", res);
+          this.$message.success("识别成功");
+          this.pdfRecognitionResult = res.data;
+          this.pdfRecognitionSelected = this.pdfRecognitionResult[this.currentPage - 1];
+          console.log("pdfRecognitionSelected", this.pdfRecognitionSelected)
+        } else {
+          console.log("识别失败", res);
+          this.$message.warning(res.msg);
+        }
+        this.$refs.upload.clearFiles();
+      },
+
+      // 文件上传失败
+      handlePdfUploadError(err) {
+        this.pdfResultLoading = false;
+        this.localPdfUrl = "";
+        console.log("识别失败", err);
+        this.$refs.upload.clearFiles();
+      },
+
+      handleClick(tab, event) {
+        console.log(tab, event);
+      },
+
+      handleCurrentChange(val) {
+        console.log("当前页:", val);
+        if (val <= 5) {
+          this.pdfRecognitionSelected = this.pdfRecognitionResult[val - 1];
+        } else {
+          this.$message.warning("最多查看前5页")
+        }
+      },
+
+      handleCheckPdfUrl() {
+        if (checkUrlIsPdf(this.pdfFileUrl)) {
+          let changedPdfFileUrl = this.pdfFileUrl + "";
+          if (changedPdfFileUrl.indexOf("http:") === 0) {
+            changedPdfFileUrl = "https:" + changedPdfFileUrl.substring(5, changedPdfFileUrl.length)
+          }
+          console.log("this.changedPdfFileUrl", changedPdfFileUrl);
+          // pdf 内容显示
+          this.pdfLoading = true;
+          this.pdfUrl = pdf.createLoadingTask(changedPdfFileUrl);
+          // 调用后端识别接口
+          this.pdfResultLoading = true;
+          let requestBody = {
+            uid: this.userProfile.uid,
+            pdfUrl: this.pdfFileUrl
+          };
+          recogniseUrlPdfFivePage(requestBody).then(res => {
+            this.pdfResultLoading = false;
+            if (res.flag === 'T') {
+              console.log("识别成功", res);
+              this.$message.success("识别成功");
+              this.pdfRecognitionResult = res.data;
+              this.pdfRecognitionSelected = this.pdfRecognitionResult[this.currentPage - 1];
+              console.log("pdfRecognitionSelected", this.pdfRecognitionSelected)
+            } else {
+              console.log("识别失败", res);
+              this.$message.warning(res.msg);
+            }
+          }).catch(err => {
+            this.pdfResultLoading = false;
+            console.log("识别失败", err);
+          })
+        } else {
+          this.$message.warning("PDF文件链接格式错误");
+        }
+      },
+
+      handlePdfEditSave() {
+
+      }
+
+    }
   }
-}
 </script>
 
 <style scoped lang="less">
-.ocr-banner {
-  box-sizing: border-box;
-  position: relative;
-  height: 450px;
-  background: url("../assets/images/pdf-background.jpg") no-repeat 50% 50%;
-  background-size: cover;
-  overflow: hidden;
-}
+  .ocr-banner {
+    box-sizing: border-box;
+    position: relative;
+    height: 450px;
+    background: url("../assets/images/pdf-background.jpg") no-repeat 50% 50%;
+    background-size: cover;
+    overflow: hidden;
+  }
 
-.ocr-banner-content {
-  overflow: hidden;
-  text-align: left;
-  width: 730px;
-  padding-right: 450px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-  z-index: 1;
-}
+  .ocr-banner-content {
+    overflow: hidden;
+    text-align: left;
+    width: 730px;
+    padding-right: 450px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
 
-.ocr-banner-title {
-  height: 67px;
-  font-size: 48px;
-  letter-spacing: 2px;
-  color: #fff;
-  position: relative;
-}
+  .ocr-banner-title {
+    height: 67px;
+    font-size: 48px;
+    letter-spacing: 2px;
+    color: #fff;
+    position: relative;
+  }
 
-.ocr-banner-info {
-  margin: 20px 110px 0 0;
-  font-size: 16px;
-  line-height: 26px;
-  color: #fff;
-  /*color: #faad15;*/
-}
+  .ocr-banner-info {
+    margin: 20px 110px 0 0;
+    font-size: 16px;
+    line-height: 26px;
+    color: #fff;
+    /*color: #faad15;*/
+  }
 
-.body-container {
-  background-color: #ffff;
-  width: 100%;
-}
+  .body-container {
+    background-color: #ffff;
+    width: 100%;
+  }
 
-.function-list-bg {
-  background-image: url("../assets/images/production-list-bg.jpg");
-  background-size: 100%;
-  background-color: #edeeef;
-  /*height: 540px;*/
-  padding: 30px 0 60px 0;
-}
+  .function-list-bg {
+    background-image: url("../assets/images/production-list-bg.jpg");
+    background-size: 100%;
+    background-color: #edeeef;
+    /*height: 540px;*/
+    padding: 30px 0 60px 0;
+  }
 
-.function-container {
-  width: 1300px;
-  margin: 0 auto;
-}
+  .function-container {
+    width: 1300px;
+    margin: 0 auto;
+  }
 
-.function-container > h2 {
-  font-size: 28px;
-  color: #333333;
-  text-align: center;
-  font-weight: bold;
-  line-height: 1.5;
-}
+  .function-container > h2 {
+    font-size: 28px;
+    color: #333333;
+    text-align: center;
+    font-weight: bold;
+    line-height: 1.5;
+  }
 
-.function-list-body {
-  max-width: 100%;
-  display: flex;
-  margin: 60px auto 0;
-  justify-content: space-between;
-}
+  .function-list-body {
+    max-width: 100%;
+    display: flex;
+    margin: 60px auto 0;
+    justify-content: space-between;
+  }
 
-.function-item-container {
-  display: flex;
-  justify-content: left;
-}
+  .function-item-container {
+    display: flex;
+    justify-content: left;
+  }
 
-.function-item-content {
-  text-align: left;
-  margin-right: 10px;
-}
+  .function-item-content {
+    text-align: left;
+    margin-right: 10px;
+  }
 
-.function-item-content > h3 {
-  display: inline-block;
-  height: 64px;
-  line-height: 64px;
-  margin: 0;
-}
+  .function-item-content > h3 {
+    display: inline-block;
+    height: 64px;
+    line-height: 64px;
+    margin: 0;
+  }
 
-.function-item-content > p {
-  margin: 0;
-  height: 42px;
-  font-size: 14px;
-  color: #666666;
-  line-height: 1.5;
-}
+  .function-item-content > p {
+    margin: 0;
+    height: 42px;
+    font-size: 14px;
+    color: #666666;
+    line-height: 1.5;
+  }
 
-.demo-show-container {
-  width: 1300px;
-  margin: 0 auto;
-  min-height: 900px;
-}
+  .demo-show-container {
+    width: 1300px;
+    margin: 0 auto;
+    min-height: 900px;
+  }
 
-.demo-show-container > h2 {
-  font-size: 28px;
-  color: #333333;
-  text-align: center;
-  font-weight: bold;
-  line-height: 1.5;
-}
+  .demo-show-container > h2 {
+    font-size: 28px;
+    color: #333333;
+    text-align: center;
+    font-weight: bold;
+    line-height: 1.5;
+  }
 
-.show-container {
-  width: 1260px;
-  min-height: 600px;
-  text-align: left;
-  padding: 0 20px 20px 20px;
-  border: 1px dashed #f68084;
-  border-radius: 6px;
-}
+  .show-container {
+    width: 1260px;
+    min-height: 600px;
+    text-align: left;
+    padding: 0 20px 20px 20px;
+    border: 1px dashed #f68084;
+    border-radius: 6px;
+  }
 
-.show-container > h3 {
-  height: 64px;
-  line-height: 64px;
-  text-align: center;
-  margin: 0;
-}
+  .show-container > h3 {
+    height: 64px;
+    line-height: 64px;
+    text-align: center;
+    margin: 0;
+  }
 
-/deep/ .el-tabs__nav {
-  position: unset;
-}
-/deep/ .el-tabs--border-card>.el-tabs__content {
-  padding: 8px;
-}
-/deep/ .jsoneditor-poweredBy {
-  display: none;
-}
+  /deep/ .el-tabs__nav {
+    position: unset;
+  }
+  /deep/ .el-tabs--border-card>.el-tabs__content {
+    padding: 8px;
+  }
+  /deep/.el-input__inner:focus {
+    border-color: #409eff;
+    outline: 0;
+    position: relative;
+    z-index: 10;
+  }
+  /deep/ .jsoneditor-poweredBy {
+    display: none;
+  }
 
-/deep/ .jsoneditor-vue {
-  height: 545px;
-}
+  /deep/ .jsoneditor-vue {
+    height: 545px;
+  }
 </style>
