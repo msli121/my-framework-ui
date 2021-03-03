@@ -97,9 +97,9 @@
                        v-loading="pdfResultLoading">
                     <el-input v-for="(item, index) in pdfRecognitionSelected.data" :key="index"
                               :style="'display: inline-block; ' + 'position: absolute; ' +
-                            'width: ' + (item.text_box_position[1][0] - item.text_box_position[0][0]) + 'px;' +
-                            'left:' + (item.text_box_position[0][0]) + 'px;' +
-                            'top:' + (item.text_box_position[0][1]) + 'px;' "
+                            'width: ' + getTextLength(item.text) + 'px;' +
+                            'left:' + (item.text_box_position[0][0])*0.4 + 'px;' +
+                            'top:' + (item.text_box_position[0][1])*0.4 + 'px;' "
                               size="mini"
                               v-model="item.text">
                     </el-input>
@@ -217,6 +217,16 @@
       userProfile() {
         return this.$store.state.userProfile;
       },
+
+      getTextLength() {
+        return function (val) {
+          if(val === '' || val === null || val === undefined || val.length === 0) {
+            return 40
+          } else {
+            return  String(val).length * 13
+          }
+        }
+      }
 
     },
 
@@ -493,6 +503,12 @@
   }
   /deep/ .el-tabs--border-card>.el-tabs__content {
     padding: 8px;
+  }
+  /deep/.el-input__inner:focus {
+    border-color: #409eff;
+    outline: 0;
+    position: relative;
+    z-index: 10;
   }
   /deep/ .jsoneditor-poweredBy {
     display: none;
