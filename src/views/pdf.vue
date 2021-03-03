@@ -91,6 +91,9 @@
             <div class="pdf-result-box" style="width: 640px; height: 600px;padding: 0;position: relative;">
               <el-button type="primary" size="small" plain @click="handlePdfEditSave"
                          style="position: absolute; right: 20px; top: 10px; z-index: 5">修改保存</el-button>
+
+              <el-button type="primary" size="small" plain @click="handleAmplifyPicture"
+                         style="position: absolute; right: 120px; top: 10px; z-index: 5">放大查看</el-button>
               <el-tabs type="border-card" v-model="activeName">
                 <el-tab-pane label="识别结果" name="result">
                   <div style="width: 100%; height: 545px;background: #e6e6e6;overflow-y: auto; overflow-x: auto; position: relative;"
@@ -134,6 +137,19 @@
     <div class="footer">
       <page-footer></page-footer>
     </div>
+    <el-dialog :visible.sync="dialogVisible" width="70%" :lock-scroll="false" title="识别结果（相对位置）" center>
+      <div style="width: 100%; height: 600px;background: #e6e6e6;overflow-y: auto; overflow-x: auto; position: relative;"
+           v-loading="pdfResultLoading">
+        <el-input v-for="(item, index) in pdfRecognitionSelected.data" :key="index"
+                  :style="'display: inline-block; ' + 'position: absolute; ' +
+                            'width: ' + getTextLength(item.text) + 'px;' +
+                            'left:' + (item.text_box_position[0][0])*0.4 + 'px;' +
+                            'top:' + (item.text_box_position[0][1])*0.4 + 'px;' "
+                  size="mini"
+                  v-model="item.text">
+        </el-input>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -155,15 +171,7 @@
     data() {
       return {
         activeName: "result",
-        showLoading: false,
-        multiple: false,
         dialogVisible: false,
-        disabled: false,
-        dialogImageUrl: '',
-        limit: 5,
-        fileList: [],
-        ocrResultList: [],
-        selectedImageSrc: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
         pdfLoading: true,
         pdfResultLoading: true,
         currentPage: 1, // pdf 文件页码
@@ -223,7 +231,7 @@
           if(val === '' || val === null || val === undefined || val.length === 0) {
             return 40
           } else {
-            return  String(val).length * 13
+            return  String(val).length * 11 + 40
           }
         }
       }
@@ -365,6 +373,10 @@
 
       handlePdfEditSave() {
 
+      },
+
+      handleAmplifyPicture() {
+        this.dialogVisible = true;
       }
 
     }

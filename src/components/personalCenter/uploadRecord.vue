@@ -9,6 +9,22 @@
       <span class="account-item-title-content">上传记录</span>
     </div>
     <div class="account-item-body" v-loading="loading">
+      <div style="position: absolute; right: 40px; z-index: 5">
+        <el-upload
+            ref="upload"
+            :action="fileUploadApiUrl"
+            multiple
+            :data="{uid: userProfile.uid}"
+            :show-file-list="false"
+            :limit="limit"
+            :before-upload="handleBeforeUpload"
+            :on-success="handleUploadSuccess"
+            :on-error="handleUploadError"
+            :on-exceed="handleExceed"
+            :file-list="fileList">
+          <el-button size="small" type="primary">上传<i class="el-icon-upload el-icon--right"></i></el-button>
+        </el-upload>
+      </div>
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane name="all">
           <span slot="label">全部 <span class="file-amount">({{allUploadFileList.length}})</span></span>
@@ -46,7 +62,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane name="ocr">
-          <span slot="label">OCR <span class="file-amount">({{ocrUploadFileList.length}})</span></span>
+          <span slot="label">图片 <span class="file-amount">({{ocrUploadFileList.length}})</span></span>
           <div v-if="ocrUploadFileList.length === 0" style="text-align: center;">
             <icon name="no-data" height="128" width="128" style="text-align: center"></icon>
             <p style="color: #AAA; font-size: 15px;text-align: center" >空空...</p>
@@ -115,6 +131,16 @@
               </el-card>
           </div>
         </el-tab-pane>
+        <el-tab-pane name="others">
+          <span slot="label">其他 <span class="file-amount">({{otherUploadFileList.length}})</span></span>
+          <div v-if="otherUploadFileList.length === 0" style="text-align: center;">
+            <icon name="no-data" height="128" width="128" style="text-align: center"></icon>
+            <p style="color: #AAA; font-size: 15px;text-align: center" >空空...</p>
+          </div>
+          <div v-else class="upload-show-container">
+
+          </div>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -124,6 +150,7 @@
   import Icon from 'vue-svg-icon/Icon'
   import uploadFileShow from "@/components/personalCenter/uploadFileShow";
   import {cancelFileStar, deleteFile, getAllUploadFile, setFileStar} from "../../base/api";
+  import apiBaseUrl from "../../base/baseUrl";
 
   export default {
     name: "baseInfo",
@@ -133,14 +160,23 @@
         loading: false,
         uploadFileShowFlag: false,
         activeName: 'all',
+        fileUploadApiUrl: apiBaseUrl + "/file/upload",
+        limit: 4,
+        fileList: [],
         selectedFile: {},
         allUploadFileList: [],
         ocrUploadFileList: [],
-        pdfUploadFileList: []
+        pdfUploadFileList: [],
+        otherUploadFileList: [],
       }
     },
     mounted() {
       this.getAllUpFile();
+    },
+    computed: {
+      userProfile() {
+        return this.$store.state.userProfile;
+      }
     },
     methods: {
       getAllUpFile() {
@@ -155,6 +191,8 @@
                 this.ocrUploadFileList.push(item);
               } else if(item.sourceGroup === 'pdf') {
                 this.pdfUploadFileList.push(item);
+              } else {
+                this.otherUploadFileList.push(item);
               }
             })
           } else {
@@ -226,7 +264,38 @@
         }).catch( e => {
           console.log(e);
         });
+      },
+
+      handleExceed() {
+        this.$notify.error({
+          title: '错误',
+          message: "最多同时上传"+this.limit+"个文件"
+        });
+      },
+
+      handleBeforeUpload() {
+        this.loading = true;
+      },
+
+      handleUploadSuccess() {
+        this.loading = false;
+        this.$notify.success({
+          title: '成功',
+          message: '上传成功'
+        });
+        this.$refs.upload.clearFiles();
+      },
+
+      handleUploadError(res) {
+        this.loading = false;
+        this.$notify.error({
+          title: '错误',
+          message: '上传失败'
+        });
+        console.log(res);
+        this.$refs.upload.clearFiles()
       }
+
     }
   }
 </script>
@@ -251,6 +320,7 @@
   .account-item-body {
     margin: 10px 0 20px 30px;
     text-align: left;
+    position: relative;
   }
   /deep/ .el-tabs__nav {
      left: 0;
