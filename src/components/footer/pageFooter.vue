@@ -35,9 +35,9 @@ export default {
   name: "pageFooter",
   data() {
     return {
-      url: require("@/assets/icons/yzq-origin.jpg"),
-      description: "“演之桥”是由上海查宁文化传播有限公司精心打造的一站式演艺平台，也是企业未来全力打造的文化品牌，主要提供演员招募，演员包装宣传及演艺人才输出，为广告影视制作提供全方位的演员及演艺人才业务。",
-      copyRight: "Copyright ©2020-2021.All Rights Reserved. 演之桥OCR 版权所有"
+      url: require("@/assets/icons/logo.png"),
+      description: "一群进击的小伙伴…^…^…",
+      copyRight: "Copyright ©2020-2021.All Rights Reserved. 亿图OCR 版权所有"
     }
   },
   methods: {}
