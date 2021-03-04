@@ -178,7 +178,7 @@
         totalPdfPage: 0, // pdf 文件页码总数
         pageCount: 0, // pdf 文件总页数
         pdfUrl: '', //  pdf 显示文件地址
-        pdfFileUrl: "http://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf", // 用户输入的 pdf url
+        pdfFileUrl: "https://www.performercn.com/file/demo.pdf", // 用户输入的 pdf url
         localPdfUrl: "", // 本地上传 pdf 文件 url
         loadedRatio: 0, // 加载进度
         pdfApiUrl: apiBaseUrl + "/pdf/recognition/five-page", // 后端 pdf 访问接口

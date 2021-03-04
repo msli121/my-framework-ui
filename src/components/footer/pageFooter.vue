@@ -15,10 +15,10 @@
           <h3>联系方式</h3>
           <ul>
             <li>
-              <span>联系手机号：15000615259</span>
+              <span>联系手机号：18012411994</span>
             </li>
             <li>
-              <span>联系微信：wxtest</span>
+              <span>联系微信：18012411994</span>
             </li>
           </ul>
         </div>
