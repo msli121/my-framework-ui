@@ -37,7 +37,7 @@
             :on-change="handlePictureChange"
             :auto-upload="false">
             <i slot="default" class="el-icon-plus"></i>
-            <div slot="tip" class="el-upload__tip" style="font-weight: bold;">支持上传 jpg/jpeg/png 文件，大小不超过 6MB</div>
+            <div slot="tip" class="el-upload__tip" style="font-weight: bold;">支持上传 jpg/jpeg/png 文件，大小不超过 15MB</div>
             <div slot="file" slot-scope="{file}">
               <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
               <span class="el-upload-list__item-actions">
@@ -59,7 +59,7 @@
           <h3>原图预览</h3>
           <div style="display: flex; justify-content: center">
             <div style="width: 80%; border: 1px dashed #f68084;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
-              <div style=" height: 400px; overflow-y: auto; overflow-x: auto">
+              <div style=" height: 500px; overflow-y: auto; overflow-x: auto">
                 <el-image :src="selectedImageSrc" style="display: block;" fit="container"></el-image>
               </div>
             </div>
@@ -83,7 +83,7 @@
           </div>
           <div style="display: flex; justify-content: center;">
             <div style="width: 80%;  border: 1px dashed #f68084;border-radius: 3px;transition: .2s; padding: 8px 0px 8px 8px;">
-              <div style=" height: 400px; overflow-y: auto; overflow-x: auto; position: relative;"
+              <div style=" height: 500px; overflow-y: auto; overflow-x: auto; position: relative;"
                    v-loading="showLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
                 <el-input v-for="(item, index) in selectedOcrResult.recognitionContent" :key="index"
                     :class="{'confidence-low': item.confidence < confidence }"
@@ -215,7 +215,7 @@ export default {
         this.selectedImageSrc = file.url;
         let that = this;
         console.log("handlePictureChange", file, fileList);
-        const isLt6M = file.size / 1024 / 1024 < 6;
+        const isLt6M = file.size / 1024 / 1024 < 15;
         const isAllowedType = file.raw.type === 'image/png' || file.raw.type === 'image/jpg' || file.raw.type === 'image/jpeg';
         // const isAllowedType = true;
         if(isLt6M && isAllowedType) {
@@ -275,7 +275,7 @@ export default {
               arr.splice(index, 1);
             }
           });
-          this.$message.error('请选择正确格式图片，大小不能超过 6MB')
+          this.$message.error('请选择正确格式图片，大小不能超过 15MB')
         }
       }
     },
@@ -480,7 +480,7 @@ export default {
   }
 
   /deep/ .el-upload-dragger {
-    height: 400px;
+    height: 500px;
     width: 580px;
     overflow-y: auto;
     overflow-x: auto;
@@ -495,7 +495,7 @@ export default {
   }
 
   .show-result {
-    height: 400px;
+    height: 500px;
     overflow-y: auto;
   }
   /deep/.el-input__inner:focus {

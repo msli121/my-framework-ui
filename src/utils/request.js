@@ -4,7 +4,7 @@ import apiBaseUrl from "../base/baseUrl";
 
 
 const instance = axios.create({
-  timeout: 6000, // 请求超时时间
+  timeout: 20000, // 请求超时时间
   baseURL: apiBaseUrl, // api 的 base_url,
   withCredentials: true, // 允许跨域使用 cookie
 });

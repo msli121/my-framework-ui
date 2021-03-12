@@ -50,7 +50,7 @@ export default {
   top: 0;
   border-bottom: 1px solid #e6e6e6;
   background: var(--gray-02,#f0f0f0);
-  z-index: 5;
+  z-index: 9;
 }
 
 .header-logo-box {

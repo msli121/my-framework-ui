@@ -107,7 +107,7 @@ export function updatePermissionStatus(data) {
  */
 // 上传单张照片
 export function uploadSinglePicture(data) {
-  return post("/ocr/single-upload", data)
+  return post("/ocr/upload-single/base64", data)
 }
 // 识别结果，编辑保存
 export function editAndSaveOcrResult(data) {
